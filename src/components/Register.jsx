@@ -1,3 +1,4 @@
+/*eslint-disable */
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -90,7 +91,6 @@ function Register(props) {
                     <button className="mainbutton" type="submit" >Register</button>
                     <br />
                     <a className="secondarybutton" id="login" onClick={props.onChecked}>Login</a>
-                    <a className="secondarybutton"><Link to="guest">Continue as a Guest</Link></a>
                 </form>
             </div>
         </div>

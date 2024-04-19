@@ -1,10 +1,10 @@
+/*eslint-disable */
 import React, { useState, useEffect,useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 let loginusername = "";
 
 function Login(props) {
-    const [isManager, setIsManager] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -117,9 +117,6 @@ function Login(props) {
                     <br />
                     <a className="secondarybutton" onClick={props.onChecked}>
                         Register
-                    </a>
-                    <a className="secondarybutton">
-                        <Link to="guest">Continue as a Guest</Link>
                     </a>
                 </form>
             </div>
