@@ -1,10 +1,33 @@
 /*eslint-disable */
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from './NavBar.jsx';
 import Card from "./Card.jsx";
 
 
 export function HomePage() {  
+
+    async function getUserData(){
+        const response = await fetch("http:"
+        ,{
+            header:{
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "accept": "application/json"
+            },
+            method: "get",
+            mode: "cors"
+        });
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        const specificuser = await response.json();
+        console.log(specificuser);
+    
+    }
+    useEffect(() => {
+        getUserData();
+    }, []);
+    
     const cards = [
         {
             title: 'Top',
