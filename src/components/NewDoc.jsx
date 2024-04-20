@@ -1,50 +1,59 @@
 /*eslint-disable */
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 let loginusername = "";
 
-function Login(props) {
+function Login() {
     const [name, setName] = useState("");
-    const [warning, setWarning] = useState("");
-    const [user, setUser] = useState({id: '', userName: '', password: '', firstName: '', lastName: '', birthDate: '', gender: '', city: '', address: '', email: '', role: '' });
-    const [submit, setsubmit] = useState("");
-   
-    function CheckType() {
-        
-        if (name.trim() === "" ) {
-            setWarning("Please enter both username and password.");
-            return; // Don't proceed with login if the form is empty
-        }
-        setsubmit("s");
-        
-        if (submit === "s"){
-            setsubmit("");
-        }
+
+    const createNewDocumentHandler = async (documentName,e) => {
+        e.preventDefault();
+        fetch("http://localhost:8080/document", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "no-cors",
+            },
+            body: JSON.stringify({
+                content: "",
+                title: "jiko",
+                ownerUsername: "ziko el goat"
+            }),
+        }).then((response) => {
+            if (response.ok) {
+                console.log("Document created successfully");
+                window.location.href = "/docs";
+            } else {
+                console.log("Error creating document");
+            }
+        })
     }
 
     return (
         <div className="containersbody">
-            <div className="container" style={{marginTop:200}}>
+            <div className="container" style={{ marginTop: 200 }}>
                 <h1>Document Creation</h1>
-                <form>
+                <form >
                     <input
                         name="Document Name"
                         placeholder="DocumentName"
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        style={{marginBottom:`10px`}}
+                        style={{ marginBottom: `10px` }}
                     />
-                  {warning && <p style={{ color: "white" }}>{warning}</p>}
-                    <a className="mainbutton" type="button" onClick={CheckType} href="/docs" style={{color:`black`}}>
+                    <button className="mainbutton" type="button" onClick={(e) => {
+                            createNewDocumentHandler(name,e)
+                        }}>
                         Create Document
-                    </a>
+                    </button>ocument
+
                     <br />
                 </form>
             </div>
         </div>
     );
 }
-export {loginusername};
+export { loginusername };
 export default Login;

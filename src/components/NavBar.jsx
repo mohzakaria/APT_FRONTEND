@@ -10,7 +10,7 @@ import {
     NavBtnLink,
 } from "./NavbarElements";
 
-const Navbar = () => {
+const Navbar = ({userName}) => {
     return (
         <>
             <Nav>
@@ -20,7 +20,7 @@ const Navbar = () => {
                 >Welcome,</h1>
                 <h2 style={{color: "white" , fontSize: "30px" , fontFamily: "Arial" , marginTop: "8px", marginLeft: "5px" 
                 }}>
-                    Jomana Moussa
+                    {userName}
                 </h2>
                 
                     {/* Second Nav */}
@@ -30,7 +30,7 @@ const Navbar = () => {
 
 
                 <NavBtn>
-                    <NavBtnLink to="/NewDocs" style={{marginRight:`25px`}}>
+                    <NavBtnLink to="/NewDocs" style={{marginRight:`25px`}} >
                         Create New Document
                     </NavBtnLink>
                     <NavBtnLink to="/">
