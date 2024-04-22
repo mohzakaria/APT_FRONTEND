@@ -7,7 +7,7 @@ let loginusername = "";
 function Login() {
     const [name, setName] = useState("");
 
-    const createNewDocumentHandler = async (documentName,e) => {
+    const createNewDocumentHandler = async (documentName, e) => {
         e.preventDefault();
         fetch("http://localhost:8080/document", {
             method: "POST",
@@ -44,10 +44,10 @@ function Login() {
                         style={{ marginBottom: `10px` }}
                     />
                     <button className="mainbutton" type="button" onClick={(e) => {
-                            createNewDocumentHandler(name,e)
-                        }}>
+                        createNewDocumentHandler(name, e)
+                    }}>
                         Create Document
-                    </button>ocument
+                    </button>
 
                     <br />
                 </form>
