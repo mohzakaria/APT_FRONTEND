@@ -1,10 +1,14 @@
 /*eslint-disable */
 import React from 'react';
 import profilePic from './docss.png';
+import { Link } from 'react-router-dom'; // import Link from react-router-dom
 
-function Card({text, title}) {
+
+function Card({text, title,id}) {
+    console.log(id); // log the id
+    
     return(
-       <a className="card" href='/docs'>
+       <Link className="card" to={`/docs/${id}`}>
             <div style={{ display: "flex-row"
 
             }}>
@@ -12,7 +16,7 @@ function Card({text, title}) {
             </div>
             <h2 className="card-title">{title}</h2>
             <p className="card-text">{text}</p>
-       </a> 
+       </Link> 
     );
 }
 export default Card
