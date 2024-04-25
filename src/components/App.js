@@ -36,7 +36,7 @@ function App() {
           </div>
         } />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/docs/id?" element={<Docs />} />
+        <Route path="/docs/:id" element={<Docs />} componenet={Docs} />
         <Route path="/newdocs" element={<div className="App"><NewDoc/> </div>} />
       </Routes>
     </Router>
