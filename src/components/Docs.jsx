@@ -85,6 +85,7 @@ export function Docs() {
               // handle error
             }
           }).catch((error) => {
+            cons
             console.error('Error:', error);
           });
       }
