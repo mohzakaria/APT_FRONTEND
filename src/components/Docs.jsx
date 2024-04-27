@@ -40,6 +40,7 @@ export function Docs() {
           deleteLength = op.delete;
         }
       }
+      console.log(id, retain, deleteLength)
 
       if (deleteLength) {
         fetch("http://localhost:8080/deleteFromDocument",
@@ -60,6 +61,7 @@ export function Docs() {
               // handle error
             }
           }).catch((error) => {
+            console.log(id, retain, deleteLength)
             console.error('Error:', error);
           });
       }
@@ -85,7 +87,6 @@ export function Docs() {
               // handle error
             }
           }).catch((error) => {
-            cons
             console.error('Error:', error);
           });
       }
