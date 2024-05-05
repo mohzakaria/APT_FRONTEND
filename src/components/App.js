@@ -21,30 +21,26 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <NewPermission />
-    </div>
-
-    // <Router>
-    //   <Routes> {/* Define your routes inside Routes */}
-    //     <Route path="/" element={ /* Render your components based on the route path */
-    //       <div>
-    //         {isRegistered ? (
-    //           <div className="App">
-    //             <Login onChecked={notRegistered} />
-    //           </div>
-    //         ) : (
-    //           <div className="App">
-    //             <Register onChecked={registered} />
-    //           </div>
-    //         )}
-    //       </div>
-    //     } />
-    //     <Route path="/home" element={<HomePage />} />
-    //     <Route path="/docs/id?" element={<Docs />} />
-    //     <Route path="/newdocs" element={<div className="App"><NewDoc/> </div>} />
-    //   </Routes>
-    // </Router>
+    <Router>
+      <Routes> {/* Define your routes inside Routes */}
+        <Route path="/" element={ /* Render your components based on the route path */
+          <div>
+            {isRegistered ? (
+              <div className="App">
+                <Login onChecked={notRegistered} />
+              </div>
+            ) : (
+              <div className="App">
+                <Register onChecked={registered} />
+              </div>
+            )}
+          </div>
+        } />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/docs/:id" element={<Docs />} componenet={Docs} />
+        <Route path="/newdocs" element={<div className="App"><NewDoc /> </div>} />
+      </Routes>
+    </Router>
   );
 }
 
