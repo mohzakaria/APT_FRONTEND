@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
-import { useParams } from 'react-router-dom'; // import useParams from react-router-dom
+import { useParams } from 'react-router-dom';
 
 const TOOLBAR_OPTIONS = [
   ["bold", "italic"],
@@ -23,14 +23,20 @@ export function Docs() {
       modules: { toolbar: TOOLBAR_OPTIONS },
     });
 
-    q.setContents(atob(content));
-    q.setText(atob(content))
-    console.log(atob(content)) // set the document content in the Quill editor
-
     q.on('text-change', (delta, oldDelta, source) => {
-      let insert, retain, deleteLength;
+      let insert='', retain, deleteLength;
       for (let op of delta.ops) {
-        if (op.insert) {
+        if (op.insert && op.attributes) {
+          if(op.attributes.bold )
+          {
+            insert = '<strong>'+op.insert+'</strong>'
+          }
+          if(op.attributes.italic)
+          {
+            insert = '<em>'+op.insert+'</em>'
+          }
+        }
+        else if (op.insert){
           insert = op.insert;
         }
         if (op.retain) {
@@ -40,7 +46,6 @@ export function Docs() {
           deleteLength = op.delete;
         }
       }
-      console.log(id, retain, deleteLength)
 
       if (deleteLength) {
         fetch("http://localhost:8080/deleteFromDocument",
@@ -50,19 +55,10 @@ export function Docs() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              id: id, // use the id from the URL parameters
+              id: id,
               index: retain,
               length: deleteLength
             }),
-          }).then((response) => {
-            if (response.ok) {
-              // handle success
-            } else {
-              // handle error
-            }
-          }).catch((error) => {
-            console.log(id, retain, deleteLength)
-            console.error('Error:', error);
           });
       }
 
@@ -77,31 +73,25 @@ export function Docs() {
             },
             body: JSON.stringify({
               newContent: deltaBase64,
-              id: id, // use the id from the URL parameters
+              id: id,
               index: retain
             }),
-          }).then((response) => {
-            if (response.ok) {
-              // handle success
-            } else {
-              // handle error
-            }
-          }).catch((error) => {
-            console.error('Error:', error);
           });
       }
     });
-  }, [content, id]); // add content and id to the dependency array
+  }, [content, id]);
 
   useEffect(() => {
-    // fetch the document content when the component mounts
     fetch(`http://localhost:8080/document/${id}`)
       .then(response => response.json())
-      .then(data => setContent(data.content));
+      .then(data => {
+        const decodedContent = atob(data.content);
+        q.root.innerHTML = decodedContent;
+      });
   }, [id]);
 
   return (
     <div id="TextEditor" className="document" ref={wrapperRef}>
-    </div>
-  );
+ </div>
+);
 }
