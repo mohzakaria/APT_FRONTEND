@@ -10,7 +10,7 @@ export function HomePage() {
 
 
     async function getUserDocuments() {
-        const response = await fetch("http://localhost:8080/document"
+        const response = await fetch("http://localhost:8085/document"
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -28,8 +28,8 @@ export function HomePage() {
 
     }
     useEffect(() => {
-         getUserDocuments()
-        
+        getUserDocuments()
+
 
     }, []);
 
@@ -64,7 +64,7 @@ export function HomePage() {
                     </h1>
                     <div style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', justifyContent: 'center' }}>
                         {documents.map((document, index) => (
-                            <Card key={index} title={document.title} text={document.owner ? document.owner.username : ''} id={document.id}  />
+                            <Card key={index} title={document.title} text={document.owner ? document.owner.username : ''} id={document.id} />
                         ))}
                     </div>
                 </div>}

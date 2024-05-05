@@ -10,7 +10,7 @@ function NewPermission() {
 
     const createNewDocumentHandler = async (documentName, e) => {
         e.preventDefault();
-        fetch("http://localhost:8080/document", {
+        fetch("http://localhost:8085/document", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
