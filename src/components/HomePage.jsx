@@ -1,16 +1,20 @@
 /*eslint-disable */
-import React, { useEffect, useState } from "react";
 import Navbar from './NavBar.jsx';
 import Card from "./Card.jsx";
+import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from "react";
+
 
 
 export function HomePage() {
     let userDocuments = [];
+    const { username } = useParams();
+
     const [documents, setDocuments] = useState(["", ""])
 
 
     async function getUserDocuments() {
-        const response = await fetch("http://localhost:8080/document"
+        const response = await fetch("http://localhost:8085/document"
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -28,15 +32,15 @@ export function HomePage() {
 
     }
     useEffect(() => {
-         getUserDocuments()
-        
+        getUserDocuments()
+
 
     }, []);
 
 
     return (
         <div>
-            <Navbar />{true &&
+            <Navbar userName={username} />{true &&
                 <div style={{
                     backgroundColor: '#dddddd',
                     display: 'grid', gap: '20px', padding: '20px',
@@ -64,7 +68,7 @@ export function HomePage() {
                     </h1>
                     <div style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', justifyContent: 'center' }}>
                         {documents.map((document, index) => (
-                            <Card key={index} title={document.title} text={document.owner ? document.owner.username : ''} id={document.id}  />
+                            <Card key={index} title={document.title} text={document.owner ? document.owner.username : ''} id={document.id} />
                         ))}
                     </div>
                 </div>}
