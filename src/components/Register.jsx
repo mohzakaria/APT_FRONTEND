@@ -1,34 +1,23 @@
 /*eslint-disable */
-import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+
 
 function Register(props) {
     const navigate = useNavigate();
+    const [confrimPassword, setConfirmPassword] = useState("");
     const [formData, setFormData] = React.useState({
-        userName: "",
+        username: "",
         password: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        birthDate: "",
-        gender: "",
-        city: "",
-        address: "",
-        role: "",
-        status: ""
     });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        const formattedValue = name === 'birthDate' ? new Date(value).toISOString() : value;
-        let updatedFormData = { ...formData, [name]: formattedValue };
 
-        if (name === 'role') {
-            updatedFormData = {
-                ...updatedFormData,
-                role: value,
-                status: value === 'Manager' ? 'pending' : 'approved'
-            };
+        let updatedFormData = { ...formData, [name]: value };
+
+        if (name == "confrimPassword") {
+            setConfirmPassword(value);
         }
 
         setFormData(updatedFormData);
@@ -39,8 +28,13 @@ function Register(props) {
     const handleRegister = async (e) => {
         e.preventDefault();
 
+        if (formData.password !== confrimPassword) {
+            alert("Passwords do not match");
+            return;
+        }
+
         try {
-            const response = await fetch("http://localhost:3000/users", {
+            const response = await fetch("http://localhost:8085/user", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -51,18 +45,10 @@ function Register(props) {
             if (response.ok) {
                 alert("Registration successful :) ");
                 console.log("Registration successful :) ");
-                if (formData.role === "Manager") {
-                    props.onChecked()
-
-                }
-                else {
-                    navigate(`main/${formData.userName}`)
-                }
+                navigate(`/home/${formData.username}`);
 
             } else {
-                alert("Registration failed. Please try again :(");
-
-
+                alert("Registration failed. Please try again");
             }
         } catch (error) {
             console.error("Error during registration:", error);
@@ -78,15 +64,15 @@ function Register(props) {
                 <form onSubmit={handleRegister}>
                     <div>
                         <label className="regsettings" htmlFor="userName">UserName:</label>
-                        <input name="userName" placeholder="UserName" required onChange={handleInputChange} />
+                        <input name="username" placeholder="UserName" required onChange={handleInputChange} />
                     </div>
                     <div>
-                    <label className="regsettings" htmlFor="password">Password:</label>
-                    <input name="password" placeholder="Password" required minLength="8" onChange={handleInputChange} />
+                        <label className="regsettings" htmlFor="password">Password:</label>
+                        <input name="password" placeholder="Password" required minLength="8" onChange={handleInputChange} />
                     </div>
                     <div>
-                    <label className="regsettings" htmlFor="password">Confrim Password:</label>
-                    <input name="password" placeholder="Confrim Password" required minLength="8" onChange={handleInputChange} />
+                        <label className="regsettings" htmlFor="password">Confrim Password:</label>
+                        <input name="confrimPassword" placeholder="Confrim Password" required minLength="8" onChange={handleInputChange} />
                     </div>
                     <button className="mainbutton" type="submit" >Register</button>
                     <br />

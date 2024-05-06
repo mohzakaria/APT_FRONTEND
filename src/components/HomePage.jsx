@@ -1,11 +1,15 @@
 /*eslint-disable */
-import React, { useEffect, useState } from "react";
 import Navbar from './NavBar.jsx';
 import Card from "./Card.jsx";
+import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from "react";
+
 
 
 export function HomePage() {
     let userDocuments = [];
+    const { username } = useParams();
+
     const [documents, setDocuments] = useState(["", ""])
 
 
@@ -36,7 +40,7 @@ export function HomePage() {
 
     return (
         <div>
-            <Navbar />{true &&
+            <Navbar userName={username} />{true &&
                 <div style={{
                     backgroundColor: '#dddddd',
                     display: 'grid', gap: '20px', padding: '20px',

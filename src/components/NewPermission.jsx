@@ -2,40 +2,82 @@
 import { colors } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 
 let loginusername = "";
 
 function NewPermission() {
     const [name, setName] = useState("");
+    const { id } = useParams();
+    async function deletePermission(id, username) {
+        try {
+            const response = await fetch(`http://localhost:8085/document/${id}/permissions/${username}`, {
+                method: 'DELETE',
+            });
 
-    const createNewDocumentHandler = async (documentName, e) => {
-        e.preventDefault();
-        fetch("http://localhost:8085/document", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "no-cors",
-            },
-            body: JSON.stringify({
-                content: "",
-                title: "jiko",
-                ownerUsername: "ziko el goat"
-            }),
-        }).then((response) => {
-            if (response.ok) {
-                console.log("Document created successfully");
-                window.location.href = "/docs";
+            if (!response.ok) {
+                const errorMessage = await response.text(); // or response.json() if the server sends JSON
+                throw new Error(errorMessage);
             } else {
-                console.log("Error creating document");
+                // Do something with the response
+                alert("Permission deleted successfully")
             }
-        })
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+    async function addEditorToDocument(id, username) {
+        try {
+            const response = await fetch(`http://localhost:8085/document/${id}/editor/${username}`, {
+                method: 'POST',
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text(); // or response.json() if the server sends JSON
+                throw new Error(errorMessage);
+            } else {
+                // Do something with the response
+                alert("Editor added successfully")
+            }
+        } catch (error) {
+            alert(error.message);
+        }
     }
 
+    async function addViewerToDocument(id, username) {
+        try {
+            const response = await fetch(`http://localhost:8085/document/${id}/viewer/${username}`, {
+                method: 'POST',
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text(); // or response.json() if the server sends JSON
+                throw new Error(errorMessage);
+            } else {
+                // Do something with the response
+                alert("Editor added successfully")
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+
+        const permissionType = document.querySelector('input[name="permissiontype"]:checked').value;
+
+        if (permissionType === 'Editor') {
+            await addEditorToDocument(id, name);
+        } else if (permissionType === 'Viewer') {
+            await addViewerToDocument(id, name);
+        }
+    }
     return (
         <div className="containersbody">
             <div className="container" style={{ marginTop: 200 }}>
                 <h1>Document Permissions</h1>
-                <form >
+                <form onSubmit={handleSubmit}>
                     <input
                         name="UserName"
                         placeholder="UserName"
@@ -54,12 +96,10 @@ function NewPermission() {
                             <label for="viewer">Viewer</label>
                         </div>
                     </div>
-                    <button className="mainbutton" type="button" onClick={(e) => {
-                        createNewDocumentHandler(name, e)
-                    }}>
+                    <button className="mainbutton" type="submit" >
                         Create Permission
                     </button>
-                    <button className="deletebutton" type="button" >
+                    <button className="deletebutton" type="button" onClick={() => deletePermission(id, name)}>
                         Delete Permission
                     </button>
 
