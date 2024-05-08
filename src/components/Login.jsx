@@ -9,32 +9,32 @@ function Login(props) {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const [warning, setWarning] = useState("");
-    const [user, setUser] = useState({id: '', userName: '', password: '', firstName: '', lastName: '', birthDate: '', gender: '', city: '', address: '', email: '', role: '' });
+    const [user, setUser] = useState({id: '', userName: '', role: '' });
     const [submit, setsubmit] = useState("");
     const isMounted = useRef(false);
+    
     useEffect(() => {
         
         async function logMovies() {
           try {
-            const response = await fetch("http://localhost:3000/users/" + username + "/" + password, {
-              method: "get",
-              mode: "cors"
+            const response = await fetch("http://localhost:8080/user/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username: username, password: password }),
             });
       
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
+            const isValidUser = await response.json();
+
+            if (!isValidUser) {
+              throw new Error("Invalid user");
+            } else {
+              alert("Sho8l fa5er mn el a5er Originalllll");
+              localStorage.setItem('username', username);
+              navigate("home");
             }
       
-            const specificuser = await response.json();
-            console.log(specificuser);
-             setUser(specificuser);
-           
-      
-            // if (specificuser.role === "Fan") {
-            //   navigate("main");
-            // } else if (specificuser.role === "Manager") {
-            //   navigate("manager");
-            // }
           } catch (error) {
             console.error("Error fetching user data:", error);
             setWarning("WRONG PASSWORD OR EMAIL");
@@ -53,14 +53,9 @@ function Login(props) {
         if (isMounted.current) {
         if (user.role === "Fan") {
           loginusername = user.userName;
-          navigate(`main/${user.userName}`);
+          navigate(`home`);
           } else if (user.role === "Manager") {
-            if(user.status === "pending"){
-              alert("Your request is still pending");
-            }
-            else{
-            navigate("manager");
-            }
+            navigate("home");
           }}else
           {
             isMounted.current = true;
@@ -70,23 +65,14 @@ function Login(props) {
       
 
     function CheckType() {
-        
+    
         if (username.trim() === "" || password.trim() === "") {
             setWarning("Please enter both username and password.");
             return; // Don't proceed with login if the form is empty
         }
-        setsubmit("s");
-        
+        setsubmit("s");  
         if (submit === "s"){
             setsubmit("");
-        }
-        
-
-        // Assuming username, password, M, and manager are defined somewhere in your code
-        if (username === "M" && password === "M") {
-           
-            // Use navigate to navigate to the manager path
-            navigate("authorizeusers");
         }
     }
 

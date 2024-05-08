@@ -34,7 +34,7 @@ function App() {
             )}
           </div>
         } />
-        <Route path="/home/:username" element={<HomePage />} />
+        <Route path="/home/username?" element={<HomePage />} />
         <Route path="/docs/:id" element={<Docs />} />
         <Route path="/newPermission/:id" element={<div className="App"><NewPermission /></div>} />
         {/* Use component prop, not componenet */}
