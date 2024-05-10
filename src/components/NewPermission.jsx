@@ -11,7 +11,7 @@ function NewPermission() {
     const { id } = useParams();
     async function deletePermission(id, username) {
         try {
-            const response = await fetch(`http://localhost:8085/document/${id}/permissions/${username}`, {
+            const response = await fetch(`http://localhost:8080/document/${id}/permissions/${username}`, {
                 method: 'DELETE',
             });
 
@@ -28,7 +28,7 @@ function NewPermission() {
     }
     async function addEditorToDocument(id, username) {
         try {
-            const response = await fetch(`http://localhost:8085/document/${id}/editor/${username}`, {
+            const response = await fetch(`http://localhost:8080/document/${id}/editor/${username}`, {
                 method: 'POST',
             });
 
@@ -46,7 +46,7 @@ function NewPermission() {
 
     async function addViewerToDocument(id, username) {
         try {
-            const response = await fetch(`http://localhost:8085/document/${id}/viewer/${username}`, {
+            const response = await fetch(`http://localhost:8080/document/${id}/viewer/${username}`, {
                 method: 'POST',
             });
 

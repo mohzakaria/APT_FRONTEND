@@ -12,7 +12,7 @@ const persistConfig = {
     storage,
     transforms: [
         expireReducer('user', {
-            expireSeconds: 60 * 60 * 24 * 30 * 2,
+            expireSeconds: 60 * 60 * 24,
             expiredState: userInitialState,
             autoExpire: true,
         }),

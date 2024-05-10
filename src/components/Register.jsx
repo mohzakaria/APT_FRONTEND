@@ -11,6 +11,13 @@ function Register(props) {
         password: "",
     });
 
+    useEffect(() => {
+        localStorage.setItem('username', "");
+        localStorage.setItem('userId', "");
+        localStorage.setItem('type', "");
+
+    }, []);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
@@ -25,8 +32,8 @@ function Register(props) {
 
 
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
+    const handleRegister = async () => {
+        
 
         if (formData.password !== confrimPassword) {
             alert("Passwords do not match");
@@ -43,16 +50,19 @@ function Register(props) {
             });
 
             if (response.ok) {
-                alert("Registration successful :) ");
+                const data = await response.json();
                 console.log("Registration successful :) ");
-                navigate(`/home/${formData.username}`);
-
-            } else {
+                localStorage.setItem('username', data.username);
+                localStorage.setItem('userId', data.id)
+                navigate("home");
+            }
+            else {
                 alert("Registration failed. Please try again");
             }
         } catch (error) {
             console.error("Error during registration:", error);
         }
+        
 
     };
     return (
@@ -61,7 +71,10 @@ function Register(props) {
             <div className="Regcontainer">
 
                 <h1 className="regsettings">Welcome</h1>
-                <form onSubmit={handleRegister}>
+                <form onSubmit={()=>{
+                    handleRegister();
+                    navigate("home");
+                }}>
                     <div>
                         <label className="regsettings" htmlFor="userName">UserName:</label>
                         <input name="username" placeholder="UserName" required onChange={handleInputChange} />

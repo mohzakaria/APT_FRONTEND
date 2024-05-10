@@ -123,6 +123,12 @@ body {
   .document .ql-toolbar.ql-snow {
     display: none;
   }
+  .info .navnar{
+    display: none;
+  }
+  .print-hide {
+    display: none!important;
+  }
 }
 
 #DivRegcontainer {
@@ -201,7 +207,7 @@ body {
 
 .welcome {
   height: 100vh;
-  background-image: url(./image.jpg);
+  /* background-image: url(./image.jpg); */
   background-size: cover;
   background-position: center;
   color: white;

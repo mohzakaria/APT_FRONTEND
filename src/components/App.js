@@ -6,6 +6,7 @@ import { HomePage } from "./HomePage";
 import { Docs } from "./Docs.jsx";
 import NewDoc from "./NewDoc.jsx";
 import NewPermission from "./NewPermission.jsx";
+import "./styles.css";
 
 function App() {
   const [isRegistered, setIsRegistered] = useState(true);
@@ -34,7 +35,7 @@ function App() {
             )}
           </div>
         } />
-        <Route path="/home/username?" element={<HomePage />} />
+        <Route path="/home/:username?" element={<HomePage />} />
         <Route path="/docs/:id" element={<Docs />} />
         <Route path="/newPermission/:id" element={<div className="App"><NewPermission /></div>} />
         {/* Use component prop, not componenet */}

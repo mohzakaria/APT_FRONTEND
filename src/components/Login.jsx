@@ -12,6 +12,12 @@ function Login(props) {
     const [user, setUser] = useState({id: '', userName: '', role: '' });
     const [submit, setsubmit] = useState("");
     const isMounted = useRef(false);
+
+    useEffect(() => {
+      localStorage.setItem('username', "");
+      localStorage.setItem('userId', "");
+      localStorage.setItem('type', "");
+    }, []);
     
     useEffect(() => {
         
@@ -27,11 +33,14 @@ function Login(props) {
       
             const isValidUser = await response.json();
 
-            if (!isValidUser) {
+            if (
+              !response.ok||
+              isValidUser === null
+            ) {
               throw new Error("Invalid user");
-            } else {
-              alert("Sho8l fa5er mn el a5er Originalllll");
+            } else { 
               localStorage.setItem('username', username);
+              localStorage.setItem('userId', isValidUser.id);
               navigate("home");
             }
       

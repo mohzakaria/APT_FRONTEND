@@ -6,10 +6,22 @@ let loginusername = "";
 
 function Login() {
     const [name, setName] = useState("");
+    const [documentName, setDocumentName] = React.useState("");
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
+        // let updatedFormData = { ...formData, documentName: value };
+
+        setDocumentName(e.target.value);
+    };
 
     const createNewDocumentHandler = async (documentName, e) => {
         e.preventDefault();
-        fetch("http://localhost:8085/document", {
+        console.log("Creating new document");
+        console.log(documentName);
+        console.log(localStorage.getItem('username'));
+        fetch("http://localhost:8080/document", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -17,17 +29,25 @@ function Login() {
             },
             body: JSON.stringify({
                 content: "",
-                title: "jiko",
-                ownerUsername: "ziko el goat"
+                title: documentName,
+                owner: {
+                    username: localStorage.getItem('username')
+                }
             }),
         }).then((response) => {
             if (response.ok) {
-                console.log("Document created successfully");
-                window.location.href = "/docs";
+                return response.json();
             } else {
                 console.log("Error creating document");
+                throw new Error("Error creating document");
             }
-        })
+        }).then((data) => {
+            console.log("Document created successfully");
+            localStorage.setItem('type', 'owner');
+            window.location.href = `/docs/${data.id}`;
+        }).catch((error) => {
+            console.log(error);
+        });
     }
 
     return (
@@ -36,19 +56,16 @@ function Login() {
                 <h1>Document Creation</h1>
                 <form >
                     <input
-                        name="Document Name"
+                        name="DocumentName"
                         placeholder="DocumentName"
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={handleInputChange}
                         style={{ marginBottom: `10px` }}
                     />
                     <button className="mainbutton" type="button" onClick={(e) => {
-                        createNewDocumentHandler(name, e)
-                    }}>
+                        createNewDocumentHandler(documentName, e)
+                        }}>
                         Create Document
-                    </button>
-
+                        </button>
                     <br />
                 </form>
             </div>
