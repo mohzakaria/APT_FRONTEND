@@ -41,7 +41,7 @@ function Register(props) {
         }
 
         try {
-            const response = await fetch("http://localhost:8085/user", {
+            const response = await fetch("http://localhost:8080/user", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

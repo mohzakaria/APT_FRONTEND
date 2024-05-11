@@ -350,7 +350,7 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://localhost:8085/document/${id}`)
+    fetch(`http://localhost:8080/document/${id}`)
       .then(response => response.json())
       .then(data => {
         setContent(data.content)
