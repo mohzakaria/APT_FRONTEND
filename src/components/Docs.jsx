@@ -4,6 +4,9 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import NavBarDoc from './NavBarDoc.jsx';
 import { useParams } from 'react-router-dom'; // import useParams from react-router-dom
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
+
 
 const TOOLBAR_OPTIONS = [
   ["bold", "italic"],
@@ -16,6 +19,29 @@ export function Docs() {
   const [content, setContent] = useState('');
   const [title, settitle] = useState('');
   const type=localStorage.getItem('type');
+  const [stompClient, setStompClient] = useState(null);
+  const [newContent, setNewContent] = useState('');
+
+
+  useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/ws');
+    const client = Stomp.over(socket);
+    client.connect({}, () => {
+      client.subscribe(`/topic/document/` , (message) => {
+        console.log(message);
+        const messageBody = JSON.parse(message.body);
+        console.log(messageBody.newContent);
+        var newMessage = atob(messageBody.newContent); 
+        console.log(newMessage);
+        setContent(newMessage);
+        
+      });
+    });
+    setStompClient(client);
+    return () => {
+      client.disconnect();
+    };
+  }, []);
 
   const wrapperRef = useCallback(wrapper => {
     if (wrapper == null) return;
@@ -85,6 +111,7 @@ export function Docs() {
     }
 
     // Convert HTML content to Delta object
+    if(content===null){
     console.log(content);
     var htmlContent = atob(content);
     console.log(htmlContent);
@@ -92,7 +119,8 @@ export function Docs() {
 
     // Set Delta object as contents of Quill editor
     q.setContents(delta);
-    console.log(delta);
+    console.log(delta);}
+   
     //q.setContents(atob(content));
     //q.setText(atob(content));
     //console.log(atob(content)) // set the document content in the Quill editor
@@ -301,31 +329,15 @@ export function Docs() {
 
         console.log(cumulativeLength);
         const deltaBase64 = btoa(insert);
-        fetch("http://localhost:8080/insertInDocument",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              newContent: deltaBase64,
-              id: id, // use the id from the URL parameters
-              index: cumulativeLength
-            }),
-          }).then((response) => {
-            if (response.ok) {
-              //console.log(insert)
-              // handle success
-            } else {
-              // handle error
-            }
-          }).catch((error) => {
-            console.error('Error:', error);
-          });
+        stompClient.send(`/app/insertInDocument`,{},JSON.stringify({
+          newContent: deltaBase64,
+          id: id, // use the id from the URL parameters
+          index: cumulativeLength
+        }));
       }
     });
 
-  }, [content, id]); // add content and id to the dependency array
+  }, [content, id,newContent]); // add content and id to the dependency array
 
   useEffect(() => {
     // fetch the document content when the component mounts
