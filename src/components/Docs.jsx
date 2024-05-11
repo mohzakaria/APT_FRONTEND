@@ -21,6 +21,9 @@ export function Docs() {
   const type=localStorage.getItem('type');
   const [stompClient, setStompClient] = useState(null);
   const [newContent, setNewContent] = useState('');
+  const [firstTime, setFirstTime] = useState(0);
+  const [index, setIndex] = useState(0);
+  var newMessage = 0;
 
 
   useEffect(() => {
@@ -33,7 +36,15 @@ export function Docs() {
         console.log(messageBody.newContent);
         var newMessage = atob(messageBody.newContent); 
         console.log(newMessage);
-        setContent(newMessage);
+        console.log(content+messageBody.newContent);
+        setNewContent(newMessage);
+        setIndex(messageBody.index);
+        newMessage=firstTime+1;
+        
+        setFirstTime(newMessage);
+        console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",firstTime);
+        
+       
         
       });
     });
@@ -111,15 +122,22 @@ export function Docs() {
     }
 
     // Convert HTML content to Delta object
-    if(content===null){
-    console.log(content);
+    console.log("sakdksadkasjd",firstTime);
+
+    
+    // console.log(content);
     var htmlContent = atob(content);
-    console.log(htmlContent);
+    // console.log(htmlContent);
     var delta = htmlToDelta(htmlContent);
 
     // Set Delta object as contents of Quill editor
     q.setContents(delta);
-    console.log(delta);}
+    // console.log(delta);
+    console.log(firstTime);    
+    // console.log("sdkald",newContent);
+    q.insertText(index,newContent);
+   
+  
    
     //q.setContents(atob(content));
     //q.setText(atob(content));
@@ -135,24 +153,24 @@ export function Docs() {
           if (op.attributes.italic) {
             insert = '<em>' + op.insert + '</em>'
           }
-          console.log(delta);
-          console.log(oldDelta);
+          // console.log(delta);
+          // console.log(oldDelta);
         }
         else if (op.insert) {
           insert = op.insert
           //console.log(op.retain);
-          console.log(delta);
-          console.log(oldDelta);
+          // console.log(delta);
+          // console.log(oldDelta);
         }
         if (op.retain) {
           retain = op.retain;
-          console.log(retain);
+          // console.log(retain);
         }
         if (op.delete) {
           deleteLength = op.delete;
-          console.log(deleteLength);
-          console.log(delta);
-          console.log(oldDelta);
+          // console.log(deleteLength);
+          // console.log(delta);
+          // console.log(oldDelta);
 
         }
       }  //console.log(id, retain, deleteLength)
@@ -190,11 +208,11 @@ export function Docs() {
 
 
               if (oldOp.insert.length >= remainRetain) {
-                console.log(cumulativeLength);
+                // console.log(cumulativeLength);
                 cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * remainRetain;
-                console.log(formattedChars.length);
-                console.log(cumulativeLength);
-                console.log(remainRetain);
+                // console.log(formattedChars.length);
+                // console.log(cumulativeLength);
+                // console.log(remainRetain);
                 if (oldOp.insert.length > remainRetain) {
                   finalIndex = cumulativeLength;
                   break;
@@ -202,10 +220,10 @@ export function Docs() {
               }
               else {
                 // Add the length of formattedChars to the cumulative length
-                console.log(cumulativeLength);
+                // console.log(cumulativeLength);
                 cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * oldOp.insert.length;
-                console.log(formattedChars.length);
-                console.log(cumulativeLength);
+                // console.log(formattedChars.length);
+                // console.log(cumulativeLength);
               }
 
 
@@ -225,7 +243,7 @@ export function Docs() {
 
             }
             chCount += oldOp.insert.length;
-            console.log(remainRetain);
+            // console.log(remainRetain);
             remainRetain -= oldOp.insert.length;
             //console.log(cumulativeLength);
             if (remainRetain == 0) {
@@ -337,7 +355,7 @@ export function Docs() {
       }
     });
 
-  }, [content, id,newContent]); // add content and id to the dependency array
+  }, [content, id,firstTime]); // add content and id to the dependency array
 
   useEffect(() => {
     // fetch the document content when the component mounts
