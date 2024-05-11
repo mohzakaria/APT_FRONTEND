@@ -21,9 +21,9 @@ const NavBarDoc = ({ docName, id }) => {
                 </NavMenu>
                 <NavBtn>
 
-                    <NavBtnLink to={`/newPermission/${id}`}>
+                    {docName!="This Document You dont have any permission" &&<NavBtnLink to={`/newPermission/${id}`}>
                         Add Permission
-                    </NavBtnLink>
+                    </NavBtnLink>}
                 </NavBtn>
             </Nav>
         </>

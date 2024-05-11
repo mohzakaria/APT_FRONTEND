@@ -1,0 +1,486 @@
+/* /////////////// In all ///////////*/
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-weight: 300;
+}
+
+.App {
+  background-image: url("./image (1).png");
+  height: 100vh;
+  width: 100%;
+  background-size: cover;
+
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #F3F3F3;
+  margin: 0;
+}
+
+.document .ql-editor {
+  width: 8.5in;
+  min-height: 11in;
+  padding: 1in;
+  margin: 1rem;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .5);
+  background-color: white;
+}
+
+.document .ql-container.ql-snow {
+  border: none;
+  display: flex;
+  justify-content: center;
+}
+
+.document .ql-toolbar.ql-snow {
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #F3F3F3;
+  border: none;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .5);
+}
+
+.ql-editor strong {
+  font-weight: bold;
+}
+
+#editor,
+#viewer {
+  display: inline;
+  width: 20%;
+}
+
+#radios {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+#radios label {
+  margin-left: 5px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+#radio2 {
+  width: 20%;
+}
+
+.deletebutton {
+  appearance: none;
+  outline: 0;
+  background-color: red;
+  border: 0;
+  font-weight: bold;
+  padding: 10px 15px;
+  color: white;
+  border-radius: 10px;
+  width: 80%;
+  font-size: 18px;
+  cursor: pointer;
+  margin-bottom: 15px;
+
+}
+
+
+
+
+
+
+
+
+@page {
+  margin: 1in;
+}
+
+@media print {
+  body {
+    background: none;
+    scrollbar-width: 0px;
+    scrollbar-color: transparent transparent;
+  }
+
+  .document .ql-editor {
+    width: 6.5in;
+    height: 9in;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    align-self: flex-start;
+  }
+
+  .document .ql-toolbar.ql-snow {
+    display: none;
+  }
+  .info .navnar{
+    display: none;
+  }
+  .print-hide {
+    display: none!important;
+  }
+}
+
+#DivRegcontainer {
+  display: flex;
+  justify-content: center;
+  align-content: space-evenly;
+  flex-wrap: nowrap;
+}
+
+.Regcontainer {
+  width: 70%;
+  padding: 15px;
+  margin-top: 3%;
+  /* margin-left: 36%; */
+  text-align: center;
+  background-color: rgba(252, 252, 252, 0.2);
+  border: 1px solid rgba(252, 252, 252, 0.4);
+  border-radius: 15px;
+
+}
+
+.Regcontainer select {
+  width: 45%;
+  display: inline;
+
+}
+
+.Regcontainer label {
+  font-weight: 700;
+  color: white;
+  font-size: large;
+  text-align: left;
+  width: 120px;
+  display: inline-block;
+}
+
+.Regcontainer h1 {
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  height: fit-content;
+  font-size: 88px;
+}
+
+.Regcontainer input {
+  width: 45%;
+  display: inline;
+  margin-left: 6px;
+  text-align: center;
+}
+
+.Regcontainer div {
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+.Regcontainer button {
+  width: 30%;
+}
+
+.regsettings {
+  color: white;
+}
+
+body {
+  font-family: "Source Sans Pro", sans-serif;
+  background-color: rgb(255, 255, 255);
+  /* background-image: url("./image(1).png"); */
+}
+
+
+.container {
+  width: 600px;
+  margin: auto;
+}
+
+.welcome {
+  height: 100vh;
+  /* background-image: url(./image.jpg); */
+  background-size: cover;
+  background-position: center;
+  color: white;
+
+  justify-content: center;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  font-size: large;
+}
+
+.welcometext {
+  margin-top: 10%;
+  font-size: 50px;
+  font-weight: bold;
+  margin-bottom: 20px;
+
+}
+
+.mainbutton {
+  appearance: none;
+  outline: 0;
+  background-color: white;
+  border: 0;
+  font-weight: bold;
+  padding: 10px 15px;
+  color: rgb(80, 140, 196);
+  border-radius: 10px;
+  width: 80%;
+  font-size: 18px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.mainbutton:hover {
+  color: white;
+  background-color: rgb(80, 140, 196);
+}
+
+.card {
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px hsla(0, 0%, 0%, 0.1);
+  padding: 20px;
+  margin: 10px;
+  text-align: center;
+  max-width: 300px;
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+.card:hover {
+  background-color: hsl(0, 0%, 95%);
+}
+
+.card .card-image {
+  margin-left: 5px;
+  max-width: 60%;
+  height: auto;
+  margin-bottom: 10px;
+  margin-right: 20px;
+  width: 100%;
+  box-shadow: 0 1px 0 0 hsl(0, 0%, 90%);
+}
+
+.card .card-title {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  color: hsl(0, 0%, 20%);
+}
+
+.card .card-text {
+  font-family: Arial, sans-serif;
+  color: hsl(0, 0%, 30%);
+}
+
+@media only screen and (min-width: 1024px) {
+
+  .containersbody {
+    font-family: "Source Sans Pro", sans-serif;
+    color: white;
+    font-weight: 300;
+    /* background-image: url("https://www.transparenttextures.com/patterns/escheresque.png"); */
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    margin: 10% auto;
+    padding: 10px;
+    text-align: center;
+    width: 30%;
+    margin-left: 36%;
+    text-align: center;
+    background-color: rgba(252, 252, 252, 0.2);
+    /* background-color: rgba(252, 252, 252, 0.15); zakria */
+    border: 1px solid rgba(252, 252, 252, 0.4);
+    border-radius: 15px;
+
+  }
+
+  .container h1 {
+    font-size: 40px;
+    font-weight: bold;
+  }
+
+  .regcontainer h1 {
+    font-size: 40px;
+    font-weight: bold;
+  }
+
+
+
+  input {
+    border: 1px solid rgba(252, 252, 252, 0.4);
+    background-color: rgba(252, 252, 252, 0.93);
+    width: 80%;
+    border-radius: 10px;
+    font-family: "Source Sans Pro", sans-serif;
+    padding: 10px 15px;
+    margin: 0 auto 10px auto;
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    color: #004869;
+    font-weight: 300;
+  }
+
+  .secondarybutton {
+    appearance: none;
+    width: 30%;
+    margin: 0px 5%;
+    outline: 0;
+    border: 0;
+    font-weight: bold;
+    color: white;
+    border-radius: 10px;
+    width: 250px;
+    font-size: 18px;
+    text-align: center;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+
+  a:link,
+  a:visited {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .secondarybutton:hover {
+    /* color:black; */
+    color: rgb(80, 140, 196);
+    /* zakaria */
+  }
+
+  #login {
+    margin-left: 13%;
+  }
+}
+
+
+
+
+/*//////////////////////////////////////////////////////////////////////*/
+/*//////////////////////////////////////////////////////////////////////*/
+
+@media only screen and (max-width: 1024px) {
+  /*///////////////////css nos el laptop///////////////////////////////*/
+
+  .containersbody {
+    font-family: "Source Sans Pro", sans-serif;
+    color: white;
+    font-weight: 300;
+    background-color: #004869;
+    /* background-image: url("https://www.transparenttextures.com/patterns/escheresque.png"); */
+    width: 100%;
+    height: 100%;
+  }
+
+  .container {
+    margin: 10% auto;
+    padding: 10px;
+    text-align: center;
+    width: 30%;
+    margin-left: 36%;
+    text-align: center;
+    background-color: rgba(252, 252, 252, 0.2);
+    border: 1px solid rgba(252, 252, 252, 0.4);
+    border-radius: 15px;
+
+  }
+
+  .containerforseats {
+    align-items: center;
+    text-align: center;
+    width: 50%;
+    margin-left: 36%;
+    background-color: rgba(252, 252, 252, 0.2);
+    border: 1px solid rgba(252, 252, 252, 0.4);
+    border-radius: 15px;
+
+  }
+
+  .container h1 {
+    font-size: 40px;
+    font-weight: bold;
+  }
+
+
+
+
+  input {
+    border: 1px solid rgba(252, 252, 252, 0.4);
+    background-color: rgba(252, 252, 252, 0.93);
+    width: 80%;
+    border-radius: 10px;
+    font-family: "Source Sans Pro", sans-serif;
+    padding: 10px 15px;
+    margin: 0 auto 10px auto;
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    color: #004869;
+    font-weight: 300;
+  }
+
+  .mainbutton {
+    appearance: none;
+    outline: 0;
+    background-color: white;
+    border: 0;
+    font-weight: bold;
+    padding: 10px 15px;
+    color: rgb(80, 140, 196);
+    border-radius: 10px;
+    width: 80%;
+    font-size: 18px;
+    cursor: pointer;
+    margin-bottom: 15px;
+  }
+
+  .mainbutton:hover {
+    color: white;
+    background-color: rgb(80, 140, 196);
+  }
+
+  .secondarybutton {
+    appearance: none;
+    width: 30%;
+    margin: 0px 5%;
+    outline: 0;
+    border: 0;
+    font-weight: bold;
+    color: white;
+    border-radius: 10px;
+    width: 250px;
+    font-size: 18px;
+    text-align: center;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .secondarybutton:hover {
+    /* color:black; */
+    color: #004869;
+  }
+
+
+  #login {
+    margin-left: 13%;
+  }
+}

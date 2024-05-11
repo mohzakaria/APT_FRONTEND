@@ -4,15 +4,70 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 function Login(props) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  const [warning, setWarning] = useState("");
-  const [user, setUser] = useState({ id: '', username: '' });
-  const [submit, setsubmit] = useState("");
-  const isMounted = useRef(false);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
+    const [warning, setWarning] = useState("");
+    const [user, setUser] = useState({id: '', userName: '', role: '' });
+    const [submit, setsubmit] = useState("");
+    const isMounted = useRef(false);
 
-  async function loginUser(username, password) {
+    useEffect(() => {
+      localStorage.setItem('username', "");
+      localStorage.setItem('userId', "");
+      localStorage.setItem('type', "");
+    }, []);
+    
+    useEffect(() => {
+        
+        async function logMovies() {
+          try {
+            const response = await fetch("http://localhost:8080/user/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username: username, password: password }),
+            });
+      
+            const isValidUser = await response.json();
+
+            if (
+              !response.ok||
+              isValidUser === null
+            ) {
+              throw new Error("Invalid user");
+            } else { 
+              localStorage.setItem('username', username);
+              localStorage.setItem('userId', isValidUser.id);
+              navigate("home");
+            }
+      
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+            setWarning("WRONG PASSWORD OR EMAIL");
+          }
+        }
+      
+        if (isMounted.current) {
+        logMovies();
+        }else
+        {
+            isMounted.current = true;
+        }
+      }, [submit]);
+
+      useEffect(() => {
+        if (isMounted.current) {
+        if (user.role === "Fan") {
+          loginusername = user.userName;
+          navigate(`home`);
+          } else if (user.role === "Manager") {
+            navigate("home");
+          }}else
+          {
+            isMounted.current = true;
+          }
 
     if (!username || !password) {
       setWarning("Please fill in all fields");
@@ -20,8 +75,16 @@ function Login(props) {
     }
     const response = await fetch(`http://localhost:8085/userlogin/${username}/${password}`);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    function CheckType() {
+    
+        if (username.trim() === "" || password.trim() === "") {
+            setWarning("Please enter both username and password.");
+            return; // Don't proceed with login if the form is empty
+        }
+        setsubmit("s");  
+        if (submit === "s"){
+            setsubmit("");
+        }
     }
 
     const data = await response.text();
