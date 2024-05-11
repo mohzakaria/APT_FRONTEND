@@ -16,7 +16,7 @@ const TOOLBAR_OPTIONS = [
 
 export function Docs() {
   const { id } = useParams();
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState('TE9BRElORy4uLi4=');
   const [title, settitle] = useState('');
   const type=localStorage.getItem('type');
   const [stompClient, setStompClient] = useState(null);
@@ -30,21 +30,20 @@ export function Docs() {
     const socket = new SockJS('http://localhost:8080/ws');
     const client = Stomp.over(socket);
     client.connect({}, () => {
-      client.subscribe(`/topic/document/` , (message) => {
-        console.log(message);
-        const messageBody = JSON.parse(message.body);
-        console.log(messageBody.newContent);
-        var newMessage = atob(messageBody.newContent); 
-        console.log(newMessage);
-        console.log(content+messageBody.newContent);
-        setNewContent(newMessage);
-        setIndex(messageBody.index);
-        newMessage=firstTime+1;
-        
-        setFirstTime(newMessage);
-        console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",firstTime);
-        
-       
+      let subscription = client.subscribe(`/topic/document` , (payload) => {
+        console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",firstTime); 
+        console.log(payload);
+        const messageBody = JSON.parse(payload.body);
+        console.log(messageBody.content);
+        // var newMessage = atob(messageBody.content); 
+        // console.log(newMessage);
+        // console.log(content+messageBody.newContent);
+        // setNewContent(newMessage);
+        // setIndex(messageBody.index);
+        // setFirstTime(firstTime+1);
+        //i want to update the content of the document
+        setContent(messageBody.content);
+
         
       });
     });
@@ -126,14 +125,15 @@ export function Docs() {
 
     
     // console.log(content);
-    var htmlContent = atob(content);
+    if(firstTime==0)
+   { var htmlContent = atob(content);
     // console.log(htmlContent);
     var delta = htmlToDelta(htmlContent);
 
     // Set Delta object as contents of Quill editor
     q.setContents(delta);
     // console.log(delta);
-    console.log(firstTime);    
+    console.log(firstTime);    }
     // console.log("sdkald",newContent);
     q.insertText(index,newContent);
    
@@ -255,27 +255,11 @@ export function Docs() {
         console.log(finalIndex);
         console.log(delLength);
 
-        fetch("http://localhost:8080/deleteFromDocument",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              id: id, // use the id from the URL parameters
-              index: finalIndex,
-              length: delLength
-            }),
-          }).then((response) => {
-            if (response.ok) {
-              // handle success
-            } else {
-              // handle error
-            }
-          }).catch((error) => {
-            console.log(id, retain, deleteLength)
-            console.error('Error:', error);
-          });
+        stompClient.send(`/app/deleteFromDocument`,{},JSON.stringify({
+          id: id, // use the id from the URL parameters
+          index: finalIndex,
+          length: delLength
+        }))
       }
 
       if (insert) {
@@ -347,15 +331,17 @@ export function Docs() {
 
         console.log(cumulativeLength);
         const deltaBase64 = btoa(insert);
+        
         stompClient.send(`/app/insertInDocument`,{},JSON.stringify({
           newContent: deltaBase64,
           id: id, // use the id from the URL parameters
           index: cumulativeLength
         }));
+      
       }
     });
 
-  }, [content, id,firstTime]); // add content and id to the dependency array
+  }, [content, id]); // add content and id to the dependency array
 
   useEffect(() => {
     // fetch the document content when the component mounts
