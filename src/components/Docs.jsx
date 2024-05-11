@@ -3,19 +3,54 @@ import React, { useCallback, useEffect, useState } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import NavBarDoc from './NavBarDoc.jsx';
-import { useParams } from 'react-router-dom'; // import useParams from react-router-dom
+import { useParams } from 'react-router-dom'; 
+import io from 'socket.io-client';
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
+
 
 const TOOLBAR_OPTIONS = [
   ["bold", "italic"],
   ["custom-button"], // Add your custom button here\
-  
+
 ];
 
 export function Docs() {
   const { id } = useParams();
   const [content, setContent] = useState('');
   const [title, settitle] = useState('');
-  const type=localStorage.getItem('type');
+  const [socket, setSocket] = useState();
+  const [stompClient, setStompClient] = useState(null);
+
+  const type = localStorage.getItem('type');
+ useEffect(() => {
+  // Create a new SockJS connection
+  let socket = new SockJS('http://localhost:8080');
+
+  // Create a new STOMP client over the SockJS connection
+  let stompClient = new Client({
+    webSocketFactory: () => socket,
+    onConnect: function(frame) {
+      // Subscribe to the /topic/document-edit topic
+      stompClient.subscribe('/topic/document-edit', function (update) {
+        // Handle the update here
+        console.log('Received update: ' + update.body);
+      });
+    },
+  });
+
+  // Connect to the server
+  stompClient.activate();
+
+  // Clean up the connection when the component unmounts
+  return () => {
+    if (stompClient) {
+      stompClient.deactivate();
+    }
+  };
+}, []);
+
+
 
   const wrapperRef = useCallback(wrapper => {
     if (wrapper == null) return;
@@ -26,7 +61,7 @@ export function Docs() {
     const q = new Quill(editor, {
       theme: "snow",
       modules: { toolbar: TOOLBAR_OPTIONS },
-      readOnly: type=="viewer" ? true : false,
+      readOnly: type == "viewer" ? true : false,
     });
 
     const customButton = document.querySelector('.ql-custom-button'); // Adjust selector as needed
@@ -339,17 +374,32 @@ export function Docs() {
     console.log(content);
   }, [id]);
 
+  // useEffect(() => {
+  //   const socket = io('http://localhost:8080');
 
+  //   socket.on('document-edit', (update) => {
+  //     // Handle the update here
+  //     if (update.operation === 'insert') {
+  //       // Handle insert operation
+  //     } else if (update.operation === 'delete') {
+  //       // Handle delete operation
+  //     }
+  //   });
+
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   return (
     <div>
-    { (type &&
-    <>
-    {type=="owner" &&<NavBarDoc docName={title} id={id} className="info navnar print-hide" />}
-      <div id="TextEditor" className="document" ref={wrapperRef} >
-      </div> </>)||<>
-      <NavBarDoc docName="This Document You dont have any permission" id={id} className="info navnar print-hide" />
-      </>}
+      {(type &&
+        <>
+          {type == "owner" && <NavBarDoc docName={title} id={id} className="info navnar print-hide" />}
+          <div id="TextEditor" className="document" ref={wrapperRef} >
+          </div> </>) || <>
+          <NavBarDoc docName="This Document You dont have any permission" id={id} className="info navnar print-hide" />
+        </>}
     </div>
   );
 }
