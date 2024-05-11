@@ -8,14 +8,14 @@ import { useParams } from 'react-router-dom'; // import useParams from react-rou
 const TOOLBAR_OPTIONS = [
   ["bold", "italic"],
   ["custom-button"], // Add your custom button here\
-  
+
 ];
 
 export function Docs() {
   const { id } = useParams();
   const [content, setContent] = useState('');
   const [title, settitle] = useState('');
-  const type=localStorage.getItem('type');
+  const type = localStorage.getItem('type');
 
   const wrapperRef = useCallback(wrapper => {
     if (wrapper == null) return;
@@ -26,7 +26,7 @@ export function Docs() {
     const q = new Quill(editor, {
       theme: "snow",
       modules: { toolbar: TOOLBAR_OPTIONS },
-      readOnly: type=="viewer" ? true : false,
+      readOnly: type == "viewer" ? true : false,
     });
 
     const customButton = document.querySelector('.ql-custom-button'); // Adjust selector as needed
@@ -209,7 +209,7 @@ export function Docs() {
         console.log(finalIndex);
         console.log(delLength);
 
-        fetch("http://localhost:8080/deleteFromDocument",
+        fetch("http://localhost:8085/deleteFromDocument",
           {
             method: "POST",
             headers: {
@@ -301,7 +301,7 @@ export function Docs() {
 
         console.log(cumulativeLength);
         const deltaBase64 = btoa(insert);
-        fetch("http://localhost:8080/insertInDocument",
+        fetch("http://localhost:8085/insertInDocument",
           {
             method: "POST",
             headers: {
@@ -329,7 +329,7 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://localhost:8080/document/${id}`)
+    fetch(`http://localhost:8085/document/${id}`)
       .then(response => response.json())
       .then(data => {
         setContent(data.content)
@@ -343,13 +343,13 @@ export function Docs() {
 
   return (
     <div>
-    { (type &&
-    <>
-    {type=="owner" &&<NavBarDoc docName={title} id={id} className="info navnar print-hide" />}
-      <div id="TextEditor" className="document" ref={wrapperRef} >
-      </div> </>)||<>
-      <NavBarDoc docName="This Document You dont have any permission" id={id} className="info navnar print-hide" />
-      </>}
+      {(type &&
+        <>
+          {type == "owner" && <NavBarDoc docName={title} id={id} className="info navnar print-hide" />}
+          <div id="TextEditor" className="document" ref={wrapperRef} >
+          </div> </>) || <>
+          <NavBarDoc docName="This Document You dont have any permission" id={id} className="info navnar print-hide" />
+        </>}
     </div>
   );
 }

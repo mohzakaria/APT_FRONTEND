@@ -1,6 +1,7 @@
 /*eslint-disable */
 import Navbar from './NavBar.jsx';
 import Card from "./Card.jsx";
+import OwnerCard from "./OwnerCard.jsx";
 import { useParams } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +16,7 @@ export function HomePage() {
 
     const [ownedDocuments, setOwnedDocuments] = useState(["", ""])
     const navigate = useNavigate();
-    const [ ownerDocuments, setOwnerDocuments] = useState([])
+    const [ownerDocuments, setOwnerDocuments] = useState([])
     const [editorDocuments, setEditorDocuments] = useState([])
     const [viewerDocuments, setViewerDocuments] = useState([])
 
@@ -27,7 +28,7 @@ export function HomePage() {
         if (!userId) {
             navigate("/")
         }
-        const response = await fetch(`http://localhost:8080/document/${userId}/owneddocs`
+        const response = await fetch(`http://localhost:8085/document/${userId}/owneddocs`
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -41,13 +42,13 @@ export function HomePage() {
 
         }
         userDocuments = await response.json();
-        console.log("AYYAYAYAYAYAYAYAYAYAYAYAYAYAYA",userDocuments);
+        console.log("AYYAYAYAYAYAYAYAYAYAYAYAYAYAYA", userDocuments);
         setOwnerDocuments(userDocuments);
 
     }
     async function getUserEditedDocuments() {
         const userId = localStorage.getItem('userId')
-        const response = await fetch(`http://localhost:8080/document/${userId}/editeddocs`
+        const response = await fetch(`http://localhost:8085/document/${userId}/editeddocs`
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -61,13 +62,13 @@ export function HomePage() {
 
         }
         userEditDocuments = await response.json();
-        console.log("leave emjdsfhdsjf",userEditDocuments);
+        console.log("leave emjdsfhdsjf", userEditDocuments);
         setEditorDocuments(userEditDocuments);
 
     }
     async function getUserViewedDocuments() {
         const userId = localStorage.getItem('userId')
-        const response = await fetch(`http://localhost:8080/document/${userId}/vieweddocs`
+        const response = await fetch(`http://localhost:8085/document/${userId}/vieweddocs`
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -83,7 +84,7 @@ export function HomePage() {
         userViewDocuments = await response.json();
         console.log(userViewDocuments);
         setViewerDocuments(userViewDocuments);
-        console.log("kdsjafkjdsakfjksa",viewerDocuments);
+        console.log("kdsjafkjdsakfjksa", viewerDocuments);
 
     }
     async function getUserEditorDocuments() {
@@ -130,6 +131,14 @@ export function HomePage() {
 
     }, []);
 
+    const handleOwnerCardAction = (actionInfo) => {
+        if (actionInfo.isdelete || actionInfo.isRenamed) {
+            getUserOwnedDocuments()
+        }
+
+    };
+
+
 
 
     return (
@@ -147,7 +156,7 @@ export function HomePage() {
                     </h1>
                     <div style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', justifyContent: 'center' }}>
                         {ownerDocuments.map((document, index) => (
-                            <Card key={index} title={document.title} text={document.owner.username ? document.owner.username : ''} id={document.id} type="owner"/>
+                            <OwnerCard key={index} title={document.title} text={document.owner.username ? document.owner.username : ''} id={document.id} type="owner" onAction={handleOwnerCardAction} />
                         ))}
                     </div>
                 </div>}
@@ -163,7 +172,7 @@ export function HomePage() {
                     </h1>
                     <div style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', justifyContent: 'center' }}>
                         {editorDocuments.map((document, index) => (
-                            <Card key={index} title={document.title} text={document.owner.username ? document.owner.username : ''} id={document.id} type="editor"/>
+                            <Card key={index} title={document.title} text={document.owner.username ? document.owner.username : ''} id={document.id} type="editor" />
                         ))}
                     </div>
                 </div>}
@@ -179,13 +188,13 @@ export function HomePage() {
                     </h1>
                     <div style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', justifyContent: 'center' }}>
                         {viewerDocuments.map((document, index) => (
-                            <Card key={index} title={document.title} text={document.owner.username ? document.owner.username : ''} id={document.id} type="viewer"/>
+                            <Card key={index} title={document.title} text={document.owner.username ? document.owner.username : ''} id={document.id} type="viewer" />
                         ))}
                     </div>
                 </div>}
             {(ownerDocuments.length === 0 && editorDocuments.length === 0 && viewerDocuments.length === 0) &&
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
-                    <h1 style={{fontSize: '24px', fontFamily: 'Arial'}}>No documents found</h1>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                    <h1 style={{ fontSize: '24px', fontFamily: 'Arial' }}>No documents found</h1>
                 </div>
             }
         </div>

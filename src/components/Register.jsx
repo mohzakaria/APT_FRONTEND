@@ -33,7 +33,7 @@ function Register(props) {
 
 
     const handleRegister = async () => {
-        
+
 
         if (formData.password !== confrimPassword) {
             alert("Passwords do not match");
@@ -41,7 +41,7 @@ function Register(props) {
         }
 
         try {
-            const response = await fetch("http://localhost:8080/user", {
+            const response = await fetch("http://localhost:8085/user", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,7 +62,7 @@ function Register(props) {
         } catch (error) {
             console.error("Error during registration:", error);
         }
-        
+
 
     };
     return (
@@ -71,7 +71,7 @@ function Register(props) {
             <div className="Regcontainer">
 
                 <h1 className="regsettings">Welcome</h1>
-                <form onSubmit={()=>{
+                <form onSubmit={() => {
                     handleRegister();
                     navigate("home");
                 }}>

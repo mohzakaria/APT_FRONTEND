@@ -15,7 +15,7 @@ export const Nav = styled.nav`
 `;
 
 export const NavLink = styled(Link)`
-    color: #808080;
+    color: #808580;
     display: flex;
     align-items: center;
     text-decoration: none;
@@ -29,7 +29,7 @@ export const NavLink = styled(Link)`
 
 export const Bars = styled(FaBars)`
     display: none;
-    color: #808080;
+    color: #808580;
     @media screen and (max-width: 768px) {
         display: block;
         position: absolute;

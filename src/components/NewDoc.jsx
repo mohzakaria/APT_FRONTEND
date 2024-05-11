@@ -21,7 +21,7 @@ function Login() {
         console.log("Creating new document");
         console.log(documentName);
         console.log(localStorage.getItem('username'));
-        fetch("http://localhost:8080/document", {
+        fetch("http://localhost:8085/document", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -62,9 +62,9 @@ function Login() {
                     />
                     <button className="mainbutton" type="button" onClick={(e) => {
                         createNewDocumentHandler(documentName, e)
-                        }}>
+                    }}>
                         Create Document
-                        </button>
+                    </button>
                     <br />
                 </form>
             </div>
