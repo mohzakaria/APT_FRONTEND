@@ -45,7 +45,7 @@ export function HomePage() {
     }
     async function getUserEditedDocuments() {
         const userId = localStorage.getItem('userId')
-        const response = await fetch(`http://localhost:8080/document/${userId}/editors`
+        const response = await fetch(`http://localhost:8080/document/${userId}/editeddocs`
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export function HomePage() {
     }
     async function getUserViewedDocuments() {
         const userId = localStorage.getItem('userId')
-        const response = await fetch(`http://localhost:8080/document/${userId}/viewers`
+        const response = await fetch(`http://localhost:8080/document/${userId}/vieweddocs`
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -122,7 +122,7 @@ export function HomePage() {
                     <h1 style={{ color: "black", fontSize: "24px", marginLeft: "20px", fontFamily: "Arial" }}>
                         Editor of:
                     </h1>
-                    <div style={gridStyle}>
+                    <div style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', justifyContent: 'center' }}>
                         {editorDocuments.map((document, index) => (
                             <Card key={index} title={document.title} text={document.owner.username ? document.owner.username : ''} id={document.id} type="editor"/>
                         ))}
