@@ -10,11 +10,13 @@ export function HomePage() {
     let userDocuments = [];
     const { username } = useParams();
 
-    const [documents, setDocuments] = useState(["", ""])
+    const [ownedDocuments, setOwnedDocuments] = useState(["", ""])
+    const [editorDocuments, setEditorDocuments] = useState([])
+    const [viewerDocuments, setViewerDocuments] = useState([])
 
 
-    async function getUserDocuments() {
-        const response = await fetch("http://localhost:8085/document"
+    async function getUserOwnerDocuments() {
+        const response = await fetch(`http://localhost:8085/document/owner/${username}`
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -28,13 +30,50 @@ export function HomePage() {
         }
         userDocuments = await response.json();
         console.log(userDocuments);
-        setDocuments(userDocuments);
+        setOwnedDocuments(userDocuments);
 
     }
+    async function getUserEditorDocuments() {
+        const response = await fetch(`http://localhost:8085/document/editor/${username}`
+            , {
+                header: {
+                    "Content-Type": "application/json",
+                    "accept": "application/json"
+                },
+                method: "get",
+
+            });
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        userDocuments = await response.json();
+        console.log(userDocuments);
+        setEditorDocuments(userDocuments);
+
+    }
+    async function getUserViewerDocuments() {
+        const response = await fetch(`http://localhost:8085/document/viewer/${username}`
+            , {
+                header: {
+                    "Content-Type": "application/json",
+                    "accept": "application/json"
+                },
+                method: "get",
+
+            });
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        userDocuments = await response.json();
+        console.log(userDocuments);
+        setViewerDocuments(userDocuments);
+
+    }
+
     useEffect(() => {
-        getUserDocuments()
-
-
+        getUserOwnerDocuments()
+        getUserEditorDocuments()
+        getUserViewerDocuments()
     }, []);
 
 
@@ -51,7 +90,7 @@ export function HomePage() {
                         Owner of:
                     </h1>
                     <div style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', justifyContent: 'center' }}>
-                        {documents.map((document, index) => (
+                        {ownedDocuments.map((document, index) => (
                             <Card key={index} title={document.title} text={document.owner ? document.owner.username : ''} id={document.id} />
                         ))}
                     </div>
@@ -67,11 +106,28 @@ export function HomePage() {
                         Editor of:
                     </h1>
                     <div style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', justifyContent: 'center' }}>
-                        {documents.map((document, index) => (
-                            <Card key={index} title={document.title} text={document.owner ? document.owner.username : ''} id={document.id} />
+                        {editorDocuments.map((document, index) => (
+                            <Card key={index} title={document.document.title} text={document.document.owner ? document.document.owner.username : ''} id={document.id} />
                         ))}
                     </div>
                 </div>}
+            {true &&
+                <div style={{
+                    backgroundColor: '#dddddd',
+                    display: 'grid', gap: '20px', padding: '20px',
+                    margin: '20px', borderRadius: '10px',
+                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2) , 0 6px 20px 0 rgba(0,0,0,0.19)'
+                }}>
+                    <h1 style={{ color: "black", fontSize: "24px", marginLeft: "20px", fontFamily: "Arial" }} >
+                        Viewer of:
+                    </h1>
+                    <div style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', justifyContent: 'center' }}>
+                        {viewerDocuments.map((document, index) => (
+                            <Card key={index} title={document.document.title} text={document.document.owner ? document.document.owner.username : ''} id={document.id} />
+                        ))}
+                    </div>
+                </div>}
+
 
         </div>
     );

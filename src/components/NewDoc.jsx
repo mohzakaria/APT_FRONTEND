@@ -1,31 +1,36 @@
 /*eslint-disable */
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-let loginusername = "";
+import { useParams } from 'react-router-dom';
 
 function Login() {
+    const navigate = useNavigate();
     const [name, setName] = useState("");
+    const { username } = useParams();
+    console.log(username);
 
     const createNewDocumentHandler = async (documentName, e) => {
         e.preventDefault();
         fetch("http://localhost:8085/document", {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                title: documentName,
                 content: "",
-                title: "jiko",
-                ownerUsername: "ziko el goat"
+                owner: {
+                    username: username,
+                }
             }),
         }).then((response) => {
             if (response.ok) {
-                console.log("Document created successfully");
-                window.location.href = "/docs";
+                response.json().then((data) => {
+                    alert("Document created successfully");
+                    navigate(`/docs/${data.id}`);
+                });
             } else {
-                console.log("Error creating document");
+                alert("Error creating document");
             }
         })
     }
@@ -55,5 +60,4 @@ function Login() {
         </div>
     );
 }
-export { loginusername };
 export default Login;

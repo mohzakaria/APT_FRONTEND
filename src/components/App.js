@@ -6,6 +6,7 @@ import { HomePage } from "./HomePage";
 import { Docs } from "./Docs.jsx";
 import NewDoc from "./NewDoc.jsx";
 import NewPermission from "./NewPermission.jsx";
+import "./App1.css";
 
 function App() {
   const [isRegistered, setIsRegistered] = useState(true);
@@ -38,7 +39,7 @@ function App() {
         <Route path="/docs/:id" element={<Docs />} />
         <Route path="/newPermission/:id" element={<div className="App"><NewPermission /></div>} />
         {/* Use component prop, not componenet */}
-        <Route path="/newdocs" element={<div className="App"><NewDoc /></div>} />
+        <Route path="/newdocs/:username" element={<div className="App"><NewDoc /></div>} />
       </Routes>
     </Router>
   );
