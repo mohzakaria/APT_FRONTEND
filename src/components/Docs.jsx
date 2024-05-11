@@ -4,6 +4,9 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import NavBarDoc from './NavBarDoc.jsx';
 import { useParams } from 'react-router-dom'; // import useParams from react-router-dom
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
+
 
 const TOOLBAR_OPTIONS = [
   ["bold", "italic"],
@@ -13,9 +16,42 @@ const TOOLBAR_OPTIONS = [
 
 export function Docs() {
   const { id } = useParams();
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState('TE9BRElORy4uLi4=');
   const [title, settitle] = useState('');
   const type=localStorage.getItem('type');
+  const [stompClient, setStompClient] = useState(null);
+  const [newContent, setNewContent] = useState('');
+  const [firstTime, setFirstTime] = useState(0);
+  const [index, setIndex] = useState(0);
+  var newMessage = 0;
+
+
+  useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/ws');
+    const client = Stomp.over(socket);
+    client.connect({}, () => {
+      let subscription = client.subscribe(`/topic/document` , (payload) => {
+        console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",firstTime); 
+        console.log(payload);
+        const messageBody = JSON.parse(payload.body);
+        console.log(messageBody.content);
+        // var newMessage = atob(messageBody.content); 
+        // console.log(newMessage);
+        // console.log(content+messageBody.newContent);
+        // setNewContent(newMessage);
+        // setIndex(messageBody.index);
+        // setFirstTime(firstTime+1);
+        //i want to update the content of the document
+        setContent(messageBody.content);
+
+        
+      });
+    });
+    setStompClient(client);
+    return () => {
+      client.disconnect();
+    };
+  }, []);
 
   const wrapperRef = useCallback(wrapper => {
     if (wrapper == null) return;
@@ -85,14 +121,24 @@ export function Docs() {
     }
 
     // Convert HTML content to Delta object
-    console.log(content);
-    var htmlContent = atob(content);
-    console.log(htmlContent);
+    console.log("sakdksadkasjd",firstTime);
+
+    
+    // console.log(content);
+    if(firstTime==0)
+   { var htmlContent = atob(content);
+    // console.log(htmlContent);
     var delta = htmlToDelta(htmlContent);
 
     // Set Delta object as contents of Quill editor
     q.setContents(delta);
-    console.log(delta);
+    // console.log(delta);
+    console.log(firstTime);    }
+    // console.log("sdkald",newContent);
+    q.insertText(index,newContent);
+   
+  
+   
     //q.setContents(atob(content));
     //q.setText(atob(content));
     //console.log(atob(content)) // set the document content in the Quill editor
@@ -107,24 +153,24 @@ export function Docs() {
           if (op.attributes.italic) {
             insert = '<em>' + op.insert + '</em>'
           }
-          console.log(delta);
-          console.log(oldDelta);
+          // console.log(delta);
+          // console.log(oldDelta);
         }
         else if (op.insert) {
           insert = op.insert
           //console.log(op.retain);
-          console.log(delta);
-          console.log(oldDelta);
+          // console.log(delta);
+          // console.log(oldDelta);
         }
         if (op.retain) {
           retain = op.retain;
-          console.log(retain);
+          // console.log(retain);
         }
         if (op.delete) {
           deleteLength = op.delete;
-          console.log(deleteLength);
-          console.log(delta);
-          console.log(oldDelta);
+          // console.log(deleteLength);
+          // console.log(delta);
+          // console.log(oldDelta);
 
         }
       }  //console.log(id, retain, deleteLength)
@@ -162,11 +208,11 @@ export function Docs() {
 
 
               if (oldOp.insert.length >= remainRetain) {
-                console.log(cumulativeLength);
+                // console.log(cumulativeLength);
                 cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * remainRetain;
-                console.log(formattedChars.length);
-                console.log(cumulativeLength);
-                console.log(remainRetain);
+                // console.log(formattedChars.length);
+                // console.log(cumulativeLength);
+                // console.log(remainRetain);
                 if (oldOp.insert.length > remainRetain) {
                   finalIndex = cumulativeLength;
                   break;
@@ -174,10 +220,10 @@ export function Docs() {
               }
               else {
                 // Add the length of formattedChars to the cumulative length
-                console.log(cumulativeLength);
+                // console.log(cumulativeLength);
                 cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * oldOp.insert.length;
-                console.log(formattedChars.length);
-                console.log(cumulativeLength);
+                // console.log(formattedChars.length);
+                // console.log(cumulativeLength);
               }
 
 
@@ -197,7 +243,7 @@ export function Docs() {
 
             }
             chCount += oldOp.insert.length;
-            console.log(remainRetain);
+            // console.log(remainRetain);
             remainRetain -= oldOp.insert.length;
             //console.log(cumulativeLength);
             if (remainRetain == 0) {
@@ -209,27 +255,11 @@ export function Docs() {
         console.log(finalIndex);
         console.log(delLength);
 
-        fetch("http://localhost:8080/deleteFromDocument",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              id: id, // use the id from the URL parameters
-              index: finalIndex,
-              length: delLength
-            }),
-          }).then((response) => {
-            if (response.ok) {
-              // handle success
-            } else {
-              // handle error
-            }
-          }).catch((error) => {
-            console.log(id, retain, deleteLength)
-            console.error('Error:', error);
-          });
+        stompClient.send(`/app/deleteFromDocument`,{},JSON.stringify({
+          id: id, // use the id from the URL parameters
+          index: finalIndex,
+          length: delLength
+        }))
       }
 
       if (insert) {
@@ -301,27 +331,13 @@ export function Docs() {
 
         console.log(cumulativeLength);
         const deltaBase64 = btoa(insert);
-        fetch("http://localhost:8080/insertInDocument",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              newContent: deltaBase64,
-              id: id, // use the id from the URL parameters
-              index: cumulativeLength
-            }),
-          }).then((response) => {
-            if (response.ok) {
-              //console.log(insert)
-              // handle success
-            } else {
-              // handle error
-            }
-          }).catch((error) => {
-            console.error('Error:', error);
-          });
+        
+        stompClient.send(`/app/insertInDocument`,{},JSON.stringify({
+          newContent: deltaBase64,
+          id: id, // use the id from the URL parameters
+          index: cumulativeLength
+        }));
+      
       }
     });
 
