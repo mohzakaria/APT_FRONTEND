@@ -11,13 +11,14 @@ import SockJS from 'sockjs-client';
 const TOOLBAR_OPTIONS = [
   ["bold", "italic"],
   ["custom-button"], // Add your custom button here\
-  
+
 ];
 
 export function Docs() {
   const { id } = useParams();
   const [content, setContent] = useState('TE9BRElORy4uLi4=');
   const [title, settitle] = useState('');
+
   const type=localStorage.getItem('type');
   const [stompClient, setStompClient] = useState(null);
   const [newContent, setNewContent] = useState('');
@@ -53,6 +54,7 @@ export function Docs() {
     };
   }, []);
 
+
   const wrapperRef = useCallback(wrapper => {
     if (wrapper == null) return;
 
@@ -62,7 +64,7 @@ export function Docs() {
     const q = new Quill(editor, {
       theme: "snow",
       modules: { toolbar: TOOLBAR_OPTIONS },
-      readOnly: type=="viewer" ? true : false,
+      readOnly: type == "viewer" ? true : false,
     });
 
     const customButton = document.querySelector('.ql-custom-button'); // Adjust selector as needed
@@ -255,11 +257,13 @@ export function Docs() {
         console.log(finalIndex);
         console.log(delLength);
 
+
         stompClient.send(`/app/deleteFromDocument`,{},JSON.stringify({
           id: id, // use the id from the URL parameters
           index: finalIndex,
           length: delLength
         }))
+
       }
 
       if (insert) {
@@ -331,13 +335,14 @@ export function Docs() {
 
         console.log(cumulativeLength);
         const deltaBase64 = btoa(insert);
+
         
         stompClient.send(`/app/insertInDocument`,{},JSON.stringify({
           newContent: deltaBase64,
           id: id, // use the id from the URL parameters
           index: cumulativeLength
         }));
-      
+
       }
     });
 
@@ -345,7 +350,7 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://localhost:8080/document/${id}`)
+    fetch(`http://localhost:8085/document/${id}`)
       .then(response => response.json())
       .then(data => {
         setContent(data.content)
@@ -359,13 +364,13 @@ export function Docs() {
 
   return (
     <div>
-    { (type &&
-    <>
-    {type=="owner" &&<NavBarDoc docName={title} id={id} className="info navnar print-hide" />}
-      <div id="TextEditor" className="document" ref={wrapperRef} >
-      </div> </>)||<>
-      <NavBarDoc docName="This Document You dont have any permission" id={id} className="info navnar print-hide" />
-      </>}
+      {(type &&
+        <>
+          {type == "owner" && <NavBarDoc docName={title} id={id} className="info navnar print-hide" />}
+          <div id="TextEditor" className="document" ref={wrapperRef} >
+          </div> </>) || <>
+          <NavBarDoc docName="This Document You dont have any permission" id={id} className="info navnar print-hide" />
+        </>}
     </div>
   );
 }

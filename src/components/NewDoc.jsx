@@ -1,10 +1,10 @@
 /*eslint-disable */
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-let loginusername = "";
+import { useParams } from 'react-router-dom';
 
 function Login() {
+    const navigate = useNavigate();
     const [name, setName] = useState("");
     const [documentName, setDocumentName] = React.useState("");
 
@@ -21,15 +21,14 @@ function Login() {
         console.log("Creating new document");
         console.log(documentName);
         console.log(localStorage.getItem('username'));
-        fetch("http://localhost:8080/document", {
+        fetch("http://localhost:8085/document", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                content: "",
                 title: documentName,
+                content: "",
                 owner: {
                     username: localStorage.getItem('username')
                 }
@@ -63,14 +62,13 @@ function Login() {
                     />
                     <button className="mainbutton" type="button" onClick={(e) => {
                         createNewDocumentHandler(documentName, e)
-                        }}>
+                    }}>
                         Create Document
-                        </button>
+                    </button>
                     <br />
                 </form>
             </div>
         </div>
     );
 }
-export { loginusername };
 export default Login;

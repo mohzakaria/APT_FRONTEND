@@ -10,19 +10,17 @@ import {
     NavBtnLink,
 } from "./NavbarElements";
 
-const Navbar = ({userName}) => {
+const Navbar = ({ userName }) => {
     return (
         <>
             <Nav>
 
                 <NavMenu>
-                <h1 style={{color: "white" , fontSize: "30px" , marginLeft: "20px" ,fontFamily: "Arial"}} 
-                >Welcome,</h1>
-                <h2 style={{color: "white" , fontSize: "30px" , fontFamily: "Arial" , marginTop: "8px", marginLeft: "5px" 
-                }}>
-                    {userName}
-                </h2>
-                
+                    <h1 style={{ color: "white", fontSize: "30px", marginLeft: "20px", fontFamily: "Arial" }}
+                    >Welcome,</h1>
+                    <h1 style={{ color: "white", fontSize: "30px", fontFamily: "Arial" }}
+                    >{userName}</h1>
+
                     {/* Second Nav */}
                     {/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
                 </NavMenu>
@@ -30,14 +28,14 @@ const Navbar = ({userName}) => {
 
 
                 <NavBtn>
-                    <NavBtnLink to="/NewDocs" style={{marginRight:`25px`}} >
+                    <NavBtnLink to={`/newdocs/${userName}`} style={{ marginRight: `25px` }} >
                         Create New Document
                     </NavBtnLink>
                     <NavBtnLink to="/">
                         Log out
                     </NavBtnLink>
                 </NavBtn>
-            </Nav>
+            </Nav >
         </>
     );
 };
