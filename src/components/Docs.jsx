@@ -22,9 +22,11 @@ export function Docs() {
 
   const type = localStorage.getItem('type');
   const [stompClient, setStompClient] = useState(null);
-  const [newContent, setNewContent] = useState('');
+  var [newContent, setNewContent] = useState(0);
   const [firstTime, setFirstTime] = useState(0);
   const [index, setIndex] = useState(0);
+  let bold = useRef(false);
+  let italic = useRef(false);
   // const [elements, setElements] = useState([]);
   var newMessage = 0;
   let elements = useRef([]);
@@ -32,15 +34,15 @@ export function Docs() {
 
 
   useEffect(() => {
-    const socket = new SockJS('http://98.66.168.16/ws');
+    const socket = new SockJS('http://localhost:8085/ws');
     const client = Stomp.over(socket);
     client.connect({}, () => {
-      let subscription = client.subscribe(`/topic/document`, (payload) => {
+      let subscription = client.subscribe(`/topic/document/${id}`, (payload) => {
 
         const messageBody = JSON.parse(payload.body);
         const comparator = elements.current[cursorindex.current]['id']
         console.log("comparator: ", comparator);
-        const len=elements.current.length;
+        const len = elements.current.length;
 
         elements.current = (messageBody.elements);
 
@@ -49,11 +51,24 @@ export function Docs() {
         console.log("Index: ", index);
 
         // Concatenate the 'value' properties of the elements
-        const concatenatedValues = elements.current.map(element => element.value).join('');
+        const concatenatedValues = elements.current.map(element => {
+          let value = element.value;
+
+          if (element.bold) {
+            value = `<strong>${value}</strong>`;
+          }
+
+          if (element.italic) {
+            value = `<em>${value}</em>`;
+          }
+
+          return value;
+        }).join('');
         console.log("Concatenated values: ", concatenatedValues);
+
         console.log("Cursor Index: ", cursorindex.current);
 
-        
+
 
         if (index > cursorindex.current) {
           cursorindex.current++;
@@ -131,8 +146,8 @@ export function Docs() {
 
           // Add text content and formatting attributes to Delta object
           deltaOps.push({ insert: textContent, attributes: attributes });
-          console.log(textContent);
-          console.log(attributes);
+          // console.log(textContent);
+          // console.log(attributes);
         }
 
 
@@ -145,21 +160,21 @@ export function Docs() {
     // Convert HTML content to Delta object
     console.log("sakdksadkasjd", firstTime);
 
-
+    var delta = htmlToDelta(content);
     // console.log(content);
-    if (firstTime == 0) {
-      // var htmlContent = atob(content);
-      // // console.log(htmlContent);
-      // var delta = htmlToDelta(htmlContent);
+    // if (firstTime == 0) {
+    //   // var htmlContent = atob(content);
+    //   // // console.log(htmlContent);
 
-      // Set Delta object as contents of Quill editor
-      q.setText(content);
-      // console.log(delta);
-      console.log(firstTime);
-    }
+
+    //   // Set Delta object as contents of Quill editor
+    //   //q.setText(content);
+    //   // console.log(delta);
+    //   console.log(firstTime);
+    // }
     // console.log("sdkald",newContent);
-
-    q.insertText(index, newContent);
+    q.setContents(delta)
+    // q.insertText(index, newContent);
     q.setSelection(cursorindex.current, 0);
 
 
@@ -168,14 +183,22 @@ export function Docs() {
     //q.setText(atob(content));
     //console.log(atob(content)) // set the document content in the Quill editor
     q.on('text-change', (delta, oldDelta, source) => {
-      let insert = '', retain, deleteLength;
+      let insert = '', deleteLength;
+      let retain;
+      let bareInsert = '';
+      console.log("ddddddddddddddddddddddddd", delta)
       for (let op of delta.ops) {
+        bold.current = false;
+        italic.current = false;
+        bareInsert = op.insert;
         if (op.insert && op.attributes) {
           if (op.attributes.bold) {
             insert = '<strong>' + op.insert + '</strong>'
+            bold.current = true
           }
           if (op.attributes.italic) {
             insert = '<em>' + op.insert + '</em>'
+            italic.current = true
           }
           // console.log(delta);
           // console.log(oldDelta);
@@ -282,11 +305,21 @@ export function Docs() {
         console.log(finalIndex);
         console.log(delLength);
 
+        var prevId;
+
+        if (retain) {
+
+          prevId = elements.current[retain]['id'];
+        }
+        else {
+          prevId = "$";
+        }
+
 
 
         var operation = {
           documentId: id,
-          index: elements.current[retain]['id'],
+          index: prevId,
           newContent: "",
           isBold: false,
           isItalic: false // replace with your italic status
@@ -362,17 +395,36 @@ export function Docs() {
           }
         }
 
-        console.log(cumulativeLength);
+        console.log(insert);
         const deltaBase64 = btoa(insert);
-        console.log("dfadsafsdafdsafasdfsadfasdfasdfsadfsdafsdasfsadfasdfsadfsdafdsafsdafsdaffasdfdsafsdfasfsadfsdafsdafsda", elements.current);
+        console.log("hhhhhhhhhhhhhhhhhhhhhhh")
+        var prevId;
+
+        if (retain) {
+          prevId = elements.current[retain - 1]['id'];
+          console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;", elements.current[retain - 1]['value']);
+        }
+        else {
+          prevId = "$";
+        }
+        console.log("jjjjjjjjjj", prevId);
+
         var operation = {
           documentId: id,
-          index: elements.current[retain - 1]['id'],
-          newContent: insert,
-          isBold: false,
-          isItalic: false // replace with your italic status
+          index: prevId,
+          newContent: bareInsert,
+          bold: bold.current,
+          italic: italic.current // replace with your italic status
         };
         stompClient.send(`/app/insertOpertionInDocument`, {}, JSON.stringify(operation));
+
+        if (prevId == '$') {
+          setTimeout(function () {
+            setNewContent(++newContent);
+          }, 1000);
+        }
+
+
 
       }
     });
@@ -381,26 +433,41 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://98.66.168.16/document/${id}`)
+    fetch(`http://localhost:8085/document/${id}`)
       .then(response => response.text())
       .then(data => {
-        console.log("lllllllllll")
-        console.log(data);
+        console.log("lllllllllllllllllllllllllll")
+        //console.log(data);
         const con = JSON.parse(data);
         elements.current = (con.elements);
+        console.log("0000000000000000000000000000", elements.current[0]);
+
+        if (newContent == 0) {
+
+          // Concatenate the 'value' properties of the elements
+          const concatenatedValues = elements.current.map(element => {
+            let value = element.value;
+
+            if (element.bold) {
+              value = `<strong>${value}</strong>`;
+            }
+
+            if (element.italic) {
+              value = `<em>${value}</em>`;
+            }
+
+            return value;
+          }).join('');
 
 
-        // Concatenate the 'value' properties of the elements
-        const concatenatedValues = elements.current.map(element => element.value).join('');
-        console.log("Concatenatedsadoasldjasldlkaldkd values: ", concatenatedValues);
-
-        setContent(concatenatedValues);
+          setContent(concatenatedValues);
+        }
         // setContent(data)
         // settitle(data.title)
       });
 
     console.log(content);
-  }, [id]);
+  }, [id, newContent]);
 
 
 

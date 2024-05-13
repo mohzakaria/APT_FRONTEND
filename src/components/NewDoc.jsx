@@ -21,7 +21,7 @@ function Login() {
         console.log("Creating new document");
         console.log(documentName);
         console.log(localStorage.getItem('username'));
-        fetch("http://98.66.168.16/document", {
+        fetch("http://localhost:8085/document", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',

@@ -24,7 +24,7 @@ function OwnerCard({ text, title, id, type, onAction }) {
 
     async function deleteDocument() {
         try {
-            const response = await fetch(`http://98.66.168.16/document/${id}`, {
+            const response = await fetch(`http://localhost:8085/document/${id}`, {
                 method: 'DELETE',
             });
 
@@ -48,7 +48,7 @@ function OwnerCard({ text, title, id, type, onAction }) {
 
     async function renameDocument(newtitle) {
         try {
-            const response = await fetch(`http://98.66.168.16/document/${id}/${newtitle}`, {
+            const response = await fetch(`http://localhost:8085/document/${id}/${newtitle}`, {
                 method: 'PATCH',
             });
 
