@@ -28,7 +28,7 @@ export function HomePage() {
         if (!userId) {
             navigate("/")
         }
-        const response = await fetch(`http://localhost:8080/document/${userId}/owneddocs`
+        const response = await fetch(`http://localhost:8085/document/${userId}/owneddocs`
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export function HomePage() {
     }
     async function getUserEditedDocuments() {
         const userId = localStorage.getItem('userId')
-        const response = await fetch(`http://localhost:8080/document/${userId}/editeddocs`
+        const response = await fetch(`http://localhost:8085/document/${userId}/editeddocs`
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -68,7 +68,7 @@ export function HomePage() {
     }
     async function getUserViewedDocuments() {
         const userId = localStorage.getItem('userId')
-        const response = await fetch(`http://localhost:8080/document/${userId}/vieweddocs`
+        const response = await fetch(`http://localhost:8085/document/${userId}/vieweddocs`
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -88,7 +88,7 @@ export function HomePage() {
 
     }
     async function getUserEditorDocuments() {
-        const response = await fetch(`http://localhost:8080/document/editor/${username}`
+        const response = await fetch(`http://localhost:8085/document/editor/${username}`
             , {
                 header: {
                     "Content-Type": "application/json",
@@ -106,7 +106,7 @@ export function HomePage() {
 
     }
     async function getUserViewerDocuments() {
-        const response = await fetch(`http://localhost:8080/document/viewer/${username}`
+        const response = await fetch(`http://localhost:8085/document/viewer/${username}`
             , {
                 header: {
                     "Content-Type": "application/json",

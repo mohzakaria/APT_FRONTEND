@@ -19,7 +19,7 @@ export function Docs() {
   const [content, setContent] = useState('TE9BRElORy4uLi4=');
   const [title, settitle] = useState('');
 
-  const type=localStorage.getItem('type');
+  const type = localStorage.getItem('type');
   const [stompClient, setStompClient] = useState(null);
   const [newContent, setNewContent] = useState('');
   const [firstTime, setFirstTime] = useState(0);
@@ -28,24 +28,11 @@ export function Docs() {
 
 
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS('http://localhost:8085/ws');
     const client = Stomp.over(socket);
     client.connect({}, () => {
-      let subscription = client.subscribe(`/topic/document` , (payload) => {
-        console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",firstTime); 
-        console.log(payload);
-        const messageBody = JSON.parse(payload.body);
-        console.log(messageBody.content);
-        // var newMessage = atob(messageBody.content); 
-        // console.log(newMessage);
-        // console.log(content+messageBody.newContent);
-        // setNewContent(newMessage);
-        // setIndex(messageBody.index);
-        // setFirstTime(firstTime+1);
-        //i want to update the content of the document
-        setContent(messageBody.content);
-
-        
+      let subscription = client.subscribe(`/topic/document`, (payload) => {
+        setContent(payload.body);
       });
     });
     setStompClient(client);
@@ -123,24 +110,25 @@ export function Docs() {
     }
 
     // Convert HTML content to Delta object
-    console.log("sakdksadkasjd",firstTime);
+    console.log("sakdksadkasjd", firstTime);
 
-    
+
     // console.log(content);
-    if(firstTime==0)
-   { var htmlContent = atob(content);
-    // console.log(htmlContent);
-    var delta = htmlToDelta(htmlContent);
+    if (firstTime == 0) {
+      // var htmlContent = atob(content);
+      // // console.log(htmlContent);
+      // var delta = htmlToDelta(htmlContent);
 
-    // Set Delta object as contents of Quill editor
-    q.setContents(delta);
-    // console.log(delta);
-    console.log(firstTime);    }
+      // Set Delta object as contents of Quill editor
+      q.setText(content);
+      // console.log(delta);
+      console.log(firstTime);
+    }
     // console.log("sdkald",newContent);
-    q.insertText(index,newContent);
-   
-  
-   
+    q.insertText(index, newContent);
+
+
+
     //q.setContents(atob(content));
     //q.setText(atob(content));
     //console.log(atob(content)) // set the document content in the Quill editor
@@ -258,7 +246,7 @@ export function Docs() {
         console.log(delLength);
 
 
-        stompClient.send(`/app/deleteFromDocument`,{},JSON.stringify({
+        stompClient.send(`/app/deleteFromDocument`, {}, JSON.stringify({
           id: id, // use the id from the URL parameters
           index: finalIndex,
           length: delLength
@@ -336,12 +324,14 @@ export function Docs() {
         console.log(cumulativeLength);
         const deltaBase64 = btoa(insert);
 
-        
-        stompClient.send(`/app/insertInDocument`,{},JSON.stringify({
-          newContent: deltaBase64,
-          id: id, // use the id from the URL parameters
-          index: cumulativeLength
-        }));
+        var operation = {
+          documentId: id,
+          index: retain,
+          newContent: insert,
+          isBold: false,
+          isItalic: false // replace with your italic status
+        };
+        stompClient.send(`/app/insertOpertionInDocument`, {}, JSON.stringify(operation));
 
       }
     });
@@ -350,11 +340,14 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://localhost:8080/document/${id}`)
-      .then(response => response.json())
+    fetch(`http://localhost:8085/document/${id}`)
+      .then(response => response.text())
       .then(data => {
-        setContent(data.content)
-        settitle(data.title)
+        console.log("lllllllllll")
+        console.log(data);
+
+        setContent(data)
+        // settitle(data.title)
       });
 
     console.log(content);
