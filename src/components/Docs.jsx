@@ -6,6 +6,7 @@ import NavBarDoc from './NavBarDoc.jsx';
 import { useParams } from 'react-router-dom'; // import useParams from react-router-dom
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
+import {useRef} from 'react';
 
 
 const TOOLBAR_OPTIONS = [
@@ -24,7 +25,9 @@ export function Docs() {
   const [newContent, setNewContent] = useState('');
   const [firstTime, setFirstTime] = useState(0);
   const [index, setIndex] = useState(0);
+  // const [elements, setElements] = useState([]);
   var newMessage = 0;
+  let elements = useRef([]);
 
 
   useEffect(() => {
@@ -32,7 +35,15 @@ export function Docs() {
     const client = Stomp.over(socket);
     client.connect({}, () => {
       let subscription = client.subscribe(`/topic/document`, (payload) => {
-        setContent(payload.body);
+        const messageBody = JSON.parse(payload.body);
+        elements.current=(messageBody.elements);
+  
+        // Concatenate the 'value' properties of the elements
+        const concatenatedValues = elements.current.map(element => element.value).join('');
+        console.log("Concatenated values: ", concatenatedValues);
+  
+        setContent(concatenatedValues);
+        
       });
     });
     setStompClient(client);
@@ -323,10 +334,10 @@ export function Docs() {
 
         console.log(cumulativeLength);
         const deltaBase64 = btoa(insert);
-
+        console.log("dfadsafsdafdsafasdfsadfasdfasdfsadfsdafsdasfsadfasdfsadfsdafdsafsdafsdaffasdfdsafsdfasfsadfsdafsdafsda",elements.current);
         var operation = {
           documentId: id,
-          index: retain,
+          index: elements.current[retain-1]['id'],
           newContent: insert,
           isBold: false,
           isItalic: false // replace with your italic status
@@ -345,8 +356,16 @@ export function Docs() {
       .then(data => {
         console.log("lllllllllll")
         console.log(data);
-
-        setContent(data)
+        const con= JSON.parse(data);
+        elements.current=(con.elements);
+        
+  
+        // Concatenate the 'value' properties of the elements
+        const concatenatedValues = elements.current.map(element => element.value).join('');
+        console.log("Concatenatedsadoasldjasldlkaldkd values: ", concatenatedValues);
+  
+        setContent(concatenatedValues);
+        // setContent(data)
         // settitle(data.title)
       });
 
