@@ -28,6 +28,7 @@ export function Docs() {
   // const [elements, setElements] = useState([]);
   var newMessage = 0;
   let elements = useRef([]);
+  let cursorindex=useRef(0);
 
 
   useEffect(() => {
@@ -35,12 +36,26 @@ export function Docs() {
     const client = Stomp.over(socket);
     client.connect({}, () => {
       let subscription = client.subscribe(`/topic/document`, (payload) => {
+        
         const messageBody = JSON.parse(payload.body);
+        const comparator =elements.current[cursorindex.current] ['id']
+        console.log("comparator: ", comparator);
+
         elements.current = (messageBody.elements);
+        
+
+        const index = elements.current.findIndex(element => element.id === comparator);
+        console.log("Index: ", index);
 
         // Concatenate the 'value' properties of the elements
         const concatenatedValues = elements.current.map(element => element.value).join('');
         console.log("Concatenated values: ", concatenatedValues);
+        console.log("Cursor Index: ", cursorindex.current);
+        
+        if(index>cursorindex.current)
+          {
+        cursorindex.current++;}
+       
 
         setContent(concatenatedValues);
 
@@ -63,6 +78,7 @@ export function Docs() {
       theme: "snow",
       modules: { toolbar: TOOLBAR_OPTIONS },
       readOnly: type == "viewer" ? true : false,
+      
     });
 
     const customButton = document.querySelector('.ql-custom-button'); // Adjust selector as needed
@@ -72,7 +88,7 @@ export function Docs() {
       });
     }
 
-
+   
 
     // Function to convert HTML to Delta object
     function htmlToDelta(html) {
@@ -136,14 +152,15 @@ export function Docs() {
       console.log(firstTime);
     }
     // console.log("sdkald",newContent);
+   
     q.insertText(index, newContent);
-
+    q.setSelection(cursorindex.current, 0);
+    
 
 
     //q.setContents(atob(content));
     //q.setText(atob(content));
     //console.log(atob(content)) // set the document content in the Quill editor
-
     q.on('text-change', (delta, oldDelta, source) => {
       let insert = '', retain, deleteLength;
       for (let op of delta.ops) {
@@ -165,10 +182,14 @@ export function Docs() {
         }
         if (op.retain) {
           retain = op.retain;
-          // console.log(retain);
+          cursorindex.current = op.retain
+          if(op.insert)
+          {cursorindex.current++;}
+          
         }
         if (op.delete) {
           deleteLength = op.delete;
+          cursorindex.current--;
           // console.log(deleteLength);
           // console.log(delta);
           // console.log(oldDelta);
@@ -255,6 +276,7 @@ export function Docs() {
         }
         console.log(finalIndex);
         console.log(delLength);
+        
 
 
         var operation = {
