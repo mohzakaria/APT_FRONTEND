@@ -6,7 +6,7 @@ import NavBarDoc from './NavBarDoc.jsx';
 import { useParams } from 'react-router-dom'; // import useParams from react-router-dom
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
-import {useRef} from 'react';
+import { useRef } from 'react';
 
 
 const TOOLBAR_OPTIONS = [
@@ -31,19 +31,19 @@ export function Docs() {
 
 
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8085/ws');
+    const socket = new SockJS('http://98.66.168.16/ws');
     const client = Stomp.over(socket);
     client.connect({}, () => {
       let subscription = client.subscribe(`/topic/document`, (payload) => {
         const messageBody = JSON.parse(payload.body);
-        elements.current=(messageBody.elements);
-  
+        elements.current = (messageBody.elements);
+
         // Concatenate the 'value' properties of the elements
         const concatenatedValues = elements.current.map(element => element.value).join('');
         console.log("Concatenated values: ", concatenatedValues);
-  
+
         setContent(concatenatedValues);
-        
+
       });
     });
     setStompClient(client);
@@ -257,11 +257,14 @@ export function Docs() {
         console.log(delLength);
 
 
-        stompClient.send(`/app/deleteFromDocument`, {}, JSON.stringify({
-          id: id, // use the id from the URL parameters
-          index: finalIndex,
-          length: delLength
-        }))
+        var operation = {
+          documentId: id,
+          index: elements.current[retain]['id'],
+          newContent: "",
+          isBold: false,
+          isItalic: false // replace with your italic status
+        };
+        stompClient.send(`/app/deleteOpertionInDocument`, {}, JSON.stringify(operation));
 
       }
 
@@ -334,10 +337,10 @@ export function Docs() {
 
         console.log(cumulativeLength);
         const deltaBase64 = btoa(insert);
-        console.log("dfadsafsdafdsafasdfsadfasdfasdfsadfsdafsdasfsadfasdfsadfsdafdsafsdafsdaffasdfdsafsdfasfsadfsdafsdafsda",elements.current);
+        console.log("dfadsafsdafdsafasdfsadfasdfasdfsadfsdafsdasfsadfasdfsadfsdafdsafsdafsdaffasdfdsafsdfasfsadfsdafsdafsda", elements.current);
         var operation = {
           documentId: id,
-          index: elements.current[retain-1]['id'],
+          index: elements.current[retain - 1]['id'],
           newContent: insert,
           isBold: false,
           isItalic: false // replace with your italic status
@@ -351,19 +354,19 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://localhost:8085/document/${id}`)
+    fetch(`http://98.66.168.16/document/${id}`)
       .then(response => response.text())
       .then(data => {
         console.log("lllllllllll")
         console.log(data);
-        const con= JSON.parse(data);
-        elements.current=(con.elements);
-        
-  
+        const con = JSON.parse(data);
+        elements.current = (con.elements);
+
+
         // Concatenate the 'value' properties of the elements
         const concatenatedValues = elements.current.map(element => element.value).join('');
         console.log("Concatenatedsadoasldjasldlkaldkd values: ", concatenatedValues);
-  
+
         setContent(concatenatedValues);
         // setContent(data)
         // settitle(data.title)
