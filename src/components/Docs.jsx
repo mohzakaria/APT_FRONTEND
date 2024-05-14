@@ -31,7 +31,7 @@ export function Docs() {
   var newMessage = 0;
   let elements = useRef([]);
   let cursorindex = useRef(0);
-  var thisDocId=""
+  var thisDocId = ""
 
 
   useEffect(() => {
@@ -42,15 +42,15 @@ export function Docs() {
 
         const messageBody = JSON.parse(payload.body);
         console.log("el docc el taniaaaaaaaaaaaaaaaaaaaaa")
-        if(thisDocId!=messageBody.siteId){
+        if (thisDocId != messageBody.siteId) {
           return;
         }
         var comparator;
-        if(cursorindex.current < elements.current.length){
-          comparator= elements.current[cursorindex.current]['id']
+        if (cursorindex.current < elements.current.length) {
+          comparator = elements.current[cursorindex.current]['id']
         }
-        else{
-          comparator= "";
+        else {
+          comparator = "";
         }
         console.log("comparator: ", comparator);
         const len = elements.current.length;
@@ -200,9 +200,23 @@ export function Docs() {
       let bareInsert = '';
       console.log("ddddddddddddddddddddddddd", delta)
       for (let op of delta.ops) {
+
         bold.current = false;
         italic.current = false;
         bareInsert = op.insert;
+        if(op.attributes)
+          {
+            if(op.attributes.bold)
+            {
+              bold.current = true;
+
+            }
+            if(op.attributes.italic)
+            {
+              italic.current = true;
+
+            }
+          }
         if (op.insert && op.attributes) {
           if (op.attributes.bold) {
             insert = '<strong>' + op.insert + '</strong>'
@@ -337,7 +351,7 @@ export function Docs() {
           italic: false // replace with your italic status
         };
         stompClient.send(`/app/deleteOpertionInDocument/${id}`, {}, JSON.stringify(operation));
-        isUpdated.current=false;
+        isUpdated.current = false;
 
       }
 
@@ -429,12 +443,26 @@ export function Docs() {
           bold: bold.current,
           italic: italic.current // replace with your italic status
         };
-      
+
         stompClient.send(`/app/insertOpertionInDocument/${id}`, {}, JSON.stringify(operation));
         isUpdated.current = false;
 
 
 
+
+      }
+      if (delta.ops[0].retain && !insert && !deleteLength) {
+        var operation = {
+          documentId: id,
+          index: elements.current[delta.ops[0].retain]['id'],
+          newContent: bareInsert,
+          bold: bold.current,
+          italic: italic.current // replace with your italic status
+        };
+        cursorindex.current = delta.ops[0].retain+1;
+
+        stompClient.send(`/app/formatOpertionInDocument/${id}`, {}, JSON.stringify(operation));
+        isUpdated.current = false;
 
       }
       if (!isUpdated.current) {
@@ -458,7 +486,7 @@ export function Docs() {
         const con = JSON.parse(data);
         elements.current = (con.elements);
         console.log("0000000000000000000000000000", elements.current[0]);
-        thisDocId=con.siteId;
+        thisDocId = con.siteId;
         if (newContent == 0) {
 
           // Concatenate the 'value' properties of the elements
