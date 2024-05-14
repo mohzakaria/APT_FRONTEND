@@ -17,9 +17,8 @@ const TOOLBAR_OPTIONS = [
 
 export function Docs() {
   const { id } = useParams();
-  const [content, setContent] = useState('TE9BRElORy4uLi4=');
+  const [content, setContent] = useState('Loading...');
   const [title, settitle] = useState('');
-
   const type = localStorage.getItem('type');
   const [stompClient, setStompClient] = useState(null);
   var [newContent, setNewContent] = useState(0);
@@ -27,6 +26,7 @@ export function Docs() {
   const [index, setIndex] = useState(0);
   let bold = useRef(false);
   let italic = useRef(false);
+  let isUpdated = useRef(false);
   // const [elements, setElements] = useState([]);
   var newMessage = 0;
   let elements = useRef([]);
@@ -79,6 +79,7 @@ export function Docs() {
 
 
         setContent(concatenatedValues);
+        isUpdated.current = true;
 
       });
     });
@@ -316,13 +317,13 @@ export function Docs() {
         }
 
 
-
+        console.log("!!!!!!!!!!!!!!!!!", prevId);
         var operation = {
           documentId: id,
           index: prevId,
           newContent: "",
-          isBold: false,
-          isItalic: false // replace with your italic status
+          bold: false,
+          italic: false // replace with your italic status
         };
         stompClient.send(`/app/deleteOpertionInDocument`, {}, JSON.stringify(operation));
 
@@ -417,15 +418,18 @@ export function Docs() {
           italic: italic.current // replace with your italic status
         };
         stompClient.send(`/app/insertOpertionInDocument`, {}, JSON.stringify(operation));
+        isUpdated.current = false;
 
-        if (prevId == '$') {
-          setTimeout(function () {
+
+
+
+      }
+      if (!isUpdated.current) {
+        setTimeout(function () {
+          if (!isUpdated.current) {
             setNewContent(++newContent);
-          }, 1000);
-        }
-
-
-
+          }
+        }, 1100);
       }
     });
 
@@ -468,6 +472,18 @@ export function Docs() {
 
     console.log(content);
   }, [id, newContent]);
+
+  useEffect(() => {
+    // fetch the document content when the component mounts
+    fetch(`http://localhost:8085/documentTitle/${id}`)
+      .then(response => response.text())
+      .then(data => {
+        console.log("ppppppppppppppppppppppppp", data);
+        settitle(data)
+      });
+
+    console.log(content);
+  }, [id]);
 
 
 
