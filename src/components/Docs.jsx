@@ -34,13 +34,19 @@ export function Docs() {
 
 
   useEffect(() => {
-    const socket = new SockJS('http://98.66.168.16/ws');
+    const socket = new SockJS('http://localhost:8085/ws');
     const client = Stomp.over(socket);
     client.connect({}, () => {
-      let subscription = client.subscribe(`/topic/document/${id}`, (payload) => {
+      let subscription = client.subscribe(`/topic/document`, (payload) => {
 
         const messageBody = JSON.parse(payload.body);
-        const comparator = elements.current[cursorindex.current]['id']
+        var comparator;
+        if(cursorindex.current < elements.current.length){
+          comparator= elements.current[cursorindex.current]['id']
+        }
+        else{
+          comparator= "";
+        }
         console.log("comparator: ", comparator);
         const len = elements.current.length;
 
@@ -325,7 +331,7 @@ export function Docs() {
           bold: false,
           italic: false // replace with your italic status
         };
-        stompClient.send(`/app/deleteOpertionInDocument`, {}, JSON.stringify(operation));
+        stompClient.send(`/app/deleteOpertionInDocument/${id}`, {}, JSON.stringify(operation));
         isUpdated.current=false;
 
       }
@@ -418,7 +424,8 @@ export function Docs() {
           bold: bold.current,
           italic: italic.current // replace with your italic status
         };
-        stompClient.send(`/app/insertOpertionInDocument`, {}, JSON.stringify(operation));
+      
+        stompClient.send(`/app/insertOpertionInDocument/${id}`, {}, JSON.stringify(operation));
         isUpdated.current = false;
 
 
@@ -438,7 +445,7 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://98.66.168.16/document/${id}`)
+    fetch(`http://localhost:8085/document/${id}`)
       .then(response => response.text())
       .then(data => {
         console.log("lllllllllllllllllllllllllll")
@@ -476,7 +483,7 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://98.66.168.16/documentTitle/${id}`)
+    fetch(`http://localhost:8085/documentTitle/${id}`)
       .then(response => response.text())
       .then(data => {
         console.log("ppppppppppppppppppppppppp", data);
