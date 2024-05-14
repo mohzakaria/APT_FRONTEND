@@ -326,6 +326,7 @@ export function Docs() {
           italic: false // replace with your italic status
         };
         stompClient.send(`/app/deleteOpertionInDocument`, {}, JSON.stringify(operation));
+        isUpdated.current=false;
 
       }
 
