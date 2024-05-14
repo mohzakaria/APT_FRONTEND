@@ -34,7 +34,7 @@ export function Docs() {
 
 
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8085/ws');
+    const socket = new SockJS('http://98.66.168.16/ws');
     const client = Stomp.over(socket);
     client.connect({}, () => {
       let subscription = client.subscribe(`/topic/document/${id}`, (payload) => {
@@ -437,7 +437,7 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://localhost:8085/document/${id}`)
+    fetch(`http://98.66.168.16/document/${id}`)
       .then(response => response.text())
       .then(data => {
         console.log("lllllllllllllllllllllllllll")
@@ -475,7 +475,7 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://localhost:8085/documentTitle/${id}`)
+    fetch(`http://98.66.168.16/documentTitle/${id}`)
       .then(response => response.text())
       .then(data => {
         console.log("ppppppppppppppppppppppppp", data);
