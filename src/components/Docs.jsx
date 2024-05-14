@@ -457,9 +457,10 @@ export function Docs() {
           index: elements.current[delta.ops[0].retain]['id'],
           newContent: bareInsert,
           bold: bold.current,
-          italic: italic.current // replace with your italic status
+          italic: italic.current, // replace with your italic status
+          to: delta.ops.length < 1 ? delta.ops[0]?.retain : delta.ops[1]?.retain
         };
-        cursorindex.current = delta.ops[0].retain+1;
+        cursorindex.current = (delta.ops.length < 1 ? delta.ops[0]?.retain+1 : (delta.ops[1]?.retain+delta.ops[0]?.retain));
 
         stompClient.send(`/app/formatOpertionInDocument/${id}`, {}, JSON.stringify(operation));
         isUpdated.current = false;
