@@ -31,6 +31,7 @@ export function Docs() {
   var newMessage = 0;
   let elements = useRef([]);
   let cursorindex = useRef(0);
+  var thisDocId=""
 
 
   useEffect(() => {
@@ -40,6 +41,10 @@ export function Docs() {
       let subscription = client.subscribe(`/topic/document`, (payload) => {
 
         const messageBody = JSON.parse(payload.body);
+        console.log("el docc el taniaaaaaaaaaaaaaaaaaaaaa")
+        if(thisDocId!=messageBody.siteId){
+          return;
+        }
         var comparator;
         if(cursorindex.current < elements.current.length){
           comparator= elements.current[cursorindex.current]['id']
@@ -453,7 +458,7 @@ export function Docs() {
         const con = JSON.parse(data);
         elements.current = (con.elements);
         console.log("0000000000000000000000000000", elements.current[0]);
-
+        thisDocId=con.siteId;
         if (newContent == 0) {
 
           // Concatenate the 'value' properties of the elements
