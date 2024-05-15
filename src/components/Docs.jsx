@@ -31,26 +31,26 @@ export function Docs() {
   var newMessage = 0;
   let elements = useRef([]);
   let cursorindex = useRef(0);
-  var thisDocId=""
+  var thisDocId = ""
 
 
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8085/ws');
+    const socket = new SockJS('http://98.66.168.16/ws');
     const client = Stomp.over(socket);
     client.connect({}, () => {
       let subscription = client.subscribe(`/topic/document`, (payload) => {
 
         const messageBody = JSON.parse(payload.body);
         console.log("el docc el taniaaaaaaaaaaaaaaaaaaaaa")
-        if(thisDocId!=messageBody.siteId){
+        if (thisDocId != messageBody.siteId) {
           return;
         }
         var comparator;
-        if(cursorindex.current < elements.current.length){
-          comparator= elements.current[cursorindex.current]['id']
+        if (cursorindex.current < elements.current.length) {
+          comparator = elements.current[cursorindex.current]['id']
         }
-        else{
-          comparator= "";
+        else {
+          comparator = "";
         }
         console.log("comparator: ", comparator);
         const len = elements.current.length;
@@ -75,17 +75,22 @@ export function Docs() {
 
           return value;
         }).join('');
-        console.log("Concatenated values: ", concatenatedValues);
+        console.log("length befor: ", len);
+        console.log("length after: ", elements.current.length);
 
         console.log("Cursor Index: ", cursorindex.current);
 
 
-
-        if (index > cursorindex.current) {
-          cursorindex.current++;
-        }
-        if (index < cursorindex.current && len < elements.current.length) {
-          cursorindex.current++;
+        if (index != -1) {
+          if (index > cursorindex.current) {
+            cursorindex.current++;
+          }
+          if (index < cursorindex.current && len < elements.current.length) {
+            cursorindex.current++;
+          }
+          if (index < cursorindex.current && len > elements.current.length) {
+            cursorindex.current--;
+          }
         }
 
 
@@ -120,6 +125,12 @@ export function Docs() {
         window.location.href = '/your-target-page'; // Replace with your target page URL
       });
     }
+
+    q.on('selection-change', function (range, oldRange, source) {
+      if (range) {
+        cursorindex.current = range.index;
+      }
+    });
 
 
 
@@ -187,6 +198,7 @@ export function Docs() {
     // console.log("sdkald",newContent);
     q.setContents(delta)
     // q.insertText(index, newContent);
+    console.log("iiiiiiiiiiiiii", cursorindex.current);
     q.setSelection(cursorindex.current, 0);
 
 
@@ -337,7 +349,7 @@ export function Docs() {
           italic: false // replace with your italic status
         };
         stompClient.send(`/app/deleteOpertionInDocument/${id}`, {}, JSON.stringify(operation));
-        isUpdated.current=false;
+        isUpdated.current = false;
 
       }
 
@@ -429,7 +441,7 @@ export function Docs() {
           bold: bold.current,
           italic: italic.current // replace with your italic status
         };
-      
+
         stompClient.send(`/app/insertOpertionInDocument/${id}`, {}, JSON.stringify(operation));
         isUpdated.current = false;
 
@@ -450,7 +462,7 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://localhost:8085/document/${id}`)
+    fetch(`http://98.66.168.16/document/${id}`)
       .then(response => response.text())
       .then(data => {
         console.log("lllllllllllllllllllllllllll")
@@ -458,7 +470,7 @@ export function Docs() {
         const con = JSON.parse(data);
         elements.current = (con.elements);
         console.log("0000000000000000000000000000", elements.current[0]);
-        thisDocId=con.siteId;
+        thisDocId = con.siteId;
         if (newContent == 0) {
 
           // Concatenate the 'value' properties of the elements
@@ -488,7 +500,7 @@ export function Docs() {
 
   useEffect(() => {
     // fetch the document content when the component mounts
-    fetch(`http://localhost:8085/documentTitle/${id}`)
+    fetch(`http://98.66.168.16/documentTitle/${id}`)
       .then(response => response.text())
       .then(data => {
         console.log("ppppppppppppppppppppppppp", data);
