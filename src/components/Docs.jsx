@@ -92,6 +92,9 @@ export function Docs() {
             cursorindex.current--;
           }
         }
+        else if (cursorindex.current == len) {
+          cursorindex.current++;
+        }
 
 
         setContent(concatenatedValues);
