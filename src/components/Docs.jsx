@@ -215,6 +215,16 @@ export function Docs() {
         bold.current = false;
         italic.current = false;
         bareInsert = op.insert;
+        if (op.attributes) {
+          if (op.attributes.bold) {
+            bold.current = true;
+
+          }
+          if (op.attributes.italic) {
+            italic.current = true;
+
+          }
+        }
         if (op.insert && op.attributes) {
           if (op.attributes.bold) {
             insert = '<strong>' + op.insert + '</strong>'
@@ -250,84 +260,84 @@ export function Docs() {
       }  //console.log(id, retain, deleteLength)
 
       if (deleteLength) {
-        let cumulativeLength = 0;
-        let chCount = 0;
-        let remainRetain = retain;
-        let delLength = 0;
-        let finalIndex = 0;
-        if (oldDelta && oldDelta.ops) {
-          // Iterate through each operation in the oldDelta
-          for (let oldOp of oldDelta.ops) {
+        // let cumulativeLength = 0;
+        // let chCount = 0;
+        // let remainRetain = retain;
+        // let delLength = 0;
+        // let finalIndex = 0;
+        // if (oldDelta && oldDelta.ops) {
+        //   // Iterate through each operation in the oldDelta
+        //   for (let oldOp of oldDelta.ops) {
 
-            // Check if the operation has insert and attributes (formatting)
-            if (oldOp.insert && oldOp.attributes) {
-              let formattedChars = ''; // Store the formatted characters for this operation
+        //     // Check if the operation has insert and attributes (formatting)
+        //     if (oldOp.insert && oldOp.attributes) {
+        //       let formattedChars = ''; // Store the formatted characters for this operation
 
-              // Apply formatting based on attributes
-              if (oldOp.attributes.bold && oldOp.attributes.italic) {
-                formattedChars = '<strong><em>' + oldOp.insert + '</em></strong>';
-                delLength = 27;
-              } else if (oldOp.attributes.bold) {
-                formattedChars = '<strong>' + oldOp.insert + '</strong>';
-                delLength = 18;
-              } else if (oldOp.attributes.italic) {
-                formattedChars = '<em>' + oldOp.insert + '</em>';
-                delLength = 10;
-              } else {
-                formattedChars = oldOp.insert; // No formatting
-              }
-              if (remainRetain == 0) {
-                break;
-              }
-
-
-              if (oldOp.insert.length >= remainRetain) {
-                // console.log(cumulativeLength);
-                cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * remainRetain;
-                // console.log(formattedChars.length);
-                // console.log(cumulativeLength);
-                // console.log(remainRetain);
-                if (oldOp.insert.length > remainRetain) {
-                  finalIndex = cumulativeLength;
-                  break;
-                }
-              }
-              else {
-                // Add the length of formattedChars to the cumulative length
-                // console.log(cumulativeLength);
-                cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * oldOp.insert.length;
-                // console.log(formattedChars.length);
-                // console.log(cumulativeLength);
-              }
+        //       // Apply formatting based on attributes
+        //       if (oldOp.attributes.bold && oldOp.attributes.italic) {
+        //         formattedChars = '<strong><em>' + oldOp.insert + '</em></strong>';
+        //         delLength = 27;
+        //       } else if (oldOp.attributes.bold) {
+        //         formattedChars = '<strong>' + oldOp.insert + '</strong>';
+        //         delLength = 18;
+        //       } else if (oldOp.attributes.italic) {
+        //         formattedChars = '<em>' + oldOp.insert + '</em>';
+        //         delLength = 10;
+        //       } else {
+        //         formattedChars = oldOp.insert; // No formatting
+        //       }
+        //       if (remainRetain == 0) {
+        //         break;
+        //       }
 
 
-            }
-            else if (oldOp.insert) {
-              delLength = 1;
-              if (oldOp.insert.length >= remainRetain) {
-                cumulativeLength += remainRetain;
-                if (oldOp.insert.length > remainRetain) {
-                  finalIndex = cumulativeLength;
-                  break;
-                }
-              }
-              else {
-                cumulativeLength += oldOp.insert.length;
-              }
+        //       if (oldOp.insert.length >= remainRetain) {
+        //         // console.log(cumulativeLength);
+        //         cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * remainRetain;
+        //         // console.log(formattedChars.length);
+        //         // console.log(cumulativeLength);
+        //         // console.log(remainRetain);
+        //         if (oldOp.insert.length > remainRetain) {
+        //           finalIndex = cumulativeLength;
+        //           break;
+        //         }
+        //       }
+        //       else {
+        //         // Add the length of formattedChars to the cumulative length
+        //         // console.log(cumulativeLength);
+        //         cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * oldOp.insert.length;
+        //         // console.log(formattedChars.length);
+        //         // console.log(cumulativeLength);
+        //       }
 
-            }
-            chCount += oldOp.insert.length;
-            // console.log(remainRetain);
-            remainRetain -= oldOp.insert.length;
-            //console.log(cumulativeLength);
-            if (remainRetain == 0) {
-              finalIndex = cumulativeLength;
-            }
 
-          }
-        }
-        console.log(finalIndex);
-        console.log(delLength);
+        //     }
+        //     else if (oldOp.insert) {
+        //       delLength = 1;
+        //       if (oldOp.insert.length >= remainRetain) {
+        //         cumulativeLength += remainRetain;
+        //         if (oldOp.insert.length > remainRetain) {
+        //           finalIndex = cumulativeLength;
+        //           break;
+        //         }
+        //       }
+        //       else {
+        //         cumulativeLength += oldOp.insert.length;
+        //       }
+
+        //     }
+        //     chCount += oldOp.insert.length;
+        //     // console.log(remainRetain);
+        //     remainRetain -= oldOp.insert.length;
+        //     //console.log(cumulativeLength);
+        //     if (remainRetain == 0) {
+        //       finalIndex = cumulativeLength;
+        //     }
+
+        //   }
+        // }
+        // console.log(finalIndex);
+        // console.log(delLength);
 
         var prevId;
 
@@ -354,74 +364,74 @@ export function Docs() {
       }
 
       if (insert) {
-        let cumulativeLength = 0; // Cumulative length of characters in oldDelta
-        if (retain) {
-          let chCount = 0;
-          let remainRetain = retain;
-          if (oldDelta && oldDelta.ops) {
-            // Iterate through each operation in the oldDelta
-            for (let oldOp of oldDelta.ops) {
+        // let cumulativeLength = 0; // Cumulative length of characters in oldDelta
+        // if (retain) {
+        //   let chCount = 0;
+        //   let remainRetain = retain;
+        //   if (oldDelta && oldDelta.ops) {
+        //     // Iterate through each operation in the oldDelta
+        //     for (let oldOp of oldDelta.ops) {
 
-              // Check if the operation has insert and attributes (formatting)
-              if (oldOp.insert && oldOp.attributes) {
-                let formattedChars = ''; // Store the formatted characters for this operation
+        //       // Check if the operation has insert and attributes (formatting)
+        //       if (oldOp.insert && oldOp.attributes) {
+        //         let formattedChars = ''; // Store the formatted characters for this operation
 
-                // Apply formatting based on attributes
-                if (oldOp.attributes.bold && oldOp.attributes.italic) {
-                  formattedChars = '<strong><em>' + oldOp.insert + '</em></strong>';
-                } else if (oldOp.attributes.bold) {
-                  formattedChars = '<strong>' + oldOp.insert + '</strong>';
-                } else if (oldOp.attributes.italic) {
-                  formattedChars = '<em>' + oldOp.insert + '</em>';
-                } else {
-                  formattedChars = oldOp.insert; // No formatting
-                }
+        //         // Apply formatting based on attributes
+        //         if (oldOp.attributes.bold && oldOp.attributes.italic) {
+        //           formattedChars = '<strong><em>' + oldOp.insert + '</em></strong>';
+        //         } else if (oldOp.attributes.bold) {
+        //           formattedChars = '<strong>' + oldOp.insert + '</strong>';
+        //         } else if (oldOp.attributes.italic) {
+        //           formattedChars = '<em>' + oldOp.insert + '</em>';
+        //         } else {
+        //           formattedChars = oldOp.insert; // No formatting
+        //         }
 
-                if (oldOp.insert.length >= remainRetain) {
-                  console.log(cumulativeLength);
-                  cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * remainRetain;
-                  console.log(formattedChars.length);
-                  console.log(cumulativeLength);
-                  console.log(remainRetain);
-                  break;
-                }
-                else {
-                  // Add the length of formattedChars to the cumulative length
-                  console.log(cumulativeLength);
-                  cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * oldOp.insert.length;
-                  console.log(formattedChars.length);
-                  console.log(cumulativeLength);
-                }
+        //         if (oldOp.insert.length >= remainRetain) {
+        //           console.log(cumulativeLength);
+        //           cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * remainRetain;
+        //           console.log(formattedChars.length);
+        //           console.log(cumulativeLength);
+        //           console.log(remainRetain);
+        //           break;
+        //         }
+        //         else {
+        //           // Add the length of formattedChars to the cumulative length
+        //           console.log(cumulativeLength);
+        //           cumulativeLength += (formattedChars.length - oldOp.insert.length + 1) * oldOp.insert.length;
+        //           console.log(formattedChars.length);
+        //           console.log(cumulativeLength);
+        //         }
 
 
-              }
-              else if (oldOp.insert) {
-                if (oldOp.insert.length >= remainRetain) {
-                  console.log("here");
-                  console.log(remainRetain);
-                  cumulativeLength += remainRetain;
-                  if (oldOp.insert.length > remainRetain) {
-                    break;
-                  }
-                }
-                else {
-                  cumulativeLength += oldOp.insert.length;
-                }
+        //       }
+        //       else if (oldOp.insert) {
+        //         if (oldOp.insert.length >= remainRetain) {
+        //           console.log("here");
+        //           console.log(remainRetain);
+        //           cumulativeLength += remainRetain;
+        //           if (oldOp.insert.length > remainRetain) {
+        //             break;
+        //           }
+        //         }
+        //         else {
+        //           cumulativeLength += oldOp.insert.length;
+        //         }
 
-              }
-              chCount += oldOp.insert.length;
-              console.log(remainRetain);
-              remainRetain -= oldOp.insert.length;
-              //console.log(cumulativeLength);
-              if (remainRetain == 0) {
-                break;
-              }
-            }
-          }
-        }
+        //       }
+        //       chCount += oldOp.insert.length;
+        //       console.log(remainRetain);
+        //       remainRetain -= oldOp.insert.length;
+        //       //console.log(cumulativeLength);
+        //       if (remainRetain == 0) {
+        //         break;
+        //       }
+        //     }
+        //   }
+        // }
 
         console.log(insert);
-        const deltaBase64 = btoa(insert);
+        // const deltaBase64 = btoa(insert);
         console.log("hhhhhhhhhhhhhhhhhhhhhhh")
         var prevId;
 
@@ -447,6 +457,21 @@ export function Docs() {
 
 
 
+
+      }
+      if (delta.ops[0].retain && !insert && !deleteLength) {
+        var operation = {
+          documentId: id,
+          index: elements.current[delta.ops[0].retain]['id'],
+          newContent: bareInsert,
+          bold: bold.current,
+          italic: italic.current, // replace with your italic status
+          to: delta.ops.length < 1 ? delta.ops[0]?.retain : delta.ops[1]?.retain
+        };
+        cursorindex.current = (delta.ops.length < 1 ? delta.ops[0]?.retain + 1 : (delta.ops[1]?.retain + delta.ops[0]?.retain));
+
+        stompClient.send(`/app/formatOpertionInDocument/${id}`, {}, JSON.stringify(operation));
+        isUpdated.current = false;
 
       }
       if (!isUpdated.current) {
